@@ -49,9 +49,6 @@ BAE.sim = function(nt, ns, nb = 30,
                    prior.mean = rep(0, ns*nt) ## notice for binary/count outcome,the prior is on log-odds/log-rate, ie, prior is put one the coef of the model
 ){
 
-
-
-
   # now begin the functions:
   response.types = c("gaussian", "binary", "count")  # set allowed outcome types
   if (!(response.type %in% response.types)) return(
