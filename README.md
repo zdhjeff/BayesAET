@@ -1,5 +1,5 @@
 # Bayesian-Adaptive-Enrichment-Design
-An R package for Bayesian adaptive enrichment trials with multiple treatment arms and multiple (categorical) subpopulations \\
+An R package for Bayesian adaptive enrichment trials with multiple treatment arms and multiple (categorical) subpopulations  <br>
 Run the following command to install the package:
 
 ```r
