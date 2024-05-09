@@ -1,6 +1,3 @@
-#' BAE simulator
-#'
-#' This function simulates a BAE trial
 
 # library(ggplot2)
 # library(abind)
