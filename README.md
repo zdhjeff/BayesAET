@@ -2,6 +2,7 @@
 An R package for Bayesian adaptive enrichment trials with multiple treatment arms and multiple (categorical) subpopulations
 Run the following command to install the package:
 
+```r
 library(devtools) 
 install_github("zdhjeff/BayesAET")
 
