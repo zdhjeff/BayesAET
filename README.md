@@ -14,6 +14,7 @@ library(reshape2)
 library(rjags)
 library(doParallel)
 library(MASS)
+library(BayesAET)
 
 #' @param nt number of treatment arms
 #' @param ns number of subgroups
