@@ -1,5 +1,9 @@
 # Bayesian-Adaptive-Enrichment-Design
 An R package for Bayesian adaptive enrichment trials with multiple treatment arms and multiple (categorical) subpopulations
+Run the following command to install the package:
+
+library(devtools) 
+install_github("zdhjeff/BayesAET")
 
 # Example:
 
@@ -9,6 +13,7 @@ library(reshape2)
 library(rjags)
 library(doParallel)
 library(MASS)
+
 
 ## Gaussian outcome
 nt=3
