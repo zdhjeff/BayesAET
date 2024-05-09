@@ -35,6 +35,15 @@ BayesAET::BAE.sim (nt=3, ns=2, nb = 35,
                    prior.cov = diag(100, ns*nt), prior.mean = rep(0, ns*nt)
                    )
 
+#' @return n.interim: number of interim looks conducted to end the whole trial
+#' @return trt_sub: simulated treatment arm allocation (1st column) and subgroup (2nd column)
+#' @return est: treatment effect estimation(posterior mean) and the 95% Credible interval bounds for each treatment arm in each subgroup
+#' @return powerind: power indicator of whether the best treatment arms is correctly selected in each subgroup
+#' @return y: simlulated outcome
+#' @return N_terminate: the total sample size consumed when trial ends
+#' @return prob_sup_minioutcome: the probability of a treatment large than the minioutcome
+#' @return prob_superiority: the probability of a treatment being the best among each subgroup
+
 ## outputs:
 
 $n.interim
