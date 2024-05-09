@@ -5,7 +5,7 @@ Run the following command to install the package:
 ```r
 library(devtools) 
 install_github("zdhjeff/BayesAET")
-
+```
 # Example:
 
 ```r
