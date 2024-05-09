@@ -12,12 +12,6 @@ library(roxygen2)
 library(fastDummies)
 library(abind)
 
-# test inputs:
-nt=3
-ns=3
-
-
-
 
 #' BAE simulator: this function simulates a Bayesian adaptive enrichment trial
 BAE.sim = function(nt, ns, nb = 30,
