@@ -2,15 +2,15 @@
 #'
 #' This function simulates a BAE trial
 
-library(ggplot2)
-library(abind)
-library(reshape2)
-library(rjags)
-library(doParallel)
-library(MASS)
-library(roxygen2)
-library(fastDummies)
-library(abind)
+# library(ggplot2)
+# library(abind)
+# library(reshape2)
+# library(rjags)
+# library(doParallel)
+# library(MASS)
+# library(roxygen2)
+# library(fastDummies)
+# library(abind)
 
 
 #' BAE simulator: this function simulates a Bayesian adaptive enrichment trial
