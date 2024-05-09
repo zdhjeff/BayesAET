@@ -14,6 +14,24 @@
 
 
 #' BAE simulator: this function simulates a Bayesian adaptive enrichment trial
+#' @param nt number of treatment arms
+#' @param ns number of subgroups
+#' @param nb number of subjects updated at each interim look
+#' @param response.type either 'binary'(probability), 'count'(lambda) or 'gaussian'
+#' @param totaleffect vector of total effect sizes: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup
+#' @param prob.subpopulation the probability of a subject coming from one specific subpopulation. default: rep (1/ns, ns)
+#' @param prob.trtarm  the (initial) probability of a subject being assigned to a specific treatment arm. default: rep (1/nt, nt)
+#' @param maxN the maximum sample size, trial will stop when achieving this number
+#' @param upper upper probability threshold to claim superiority (in a specific subgroup); the treatment arm wins if it goes above this threshold
+#' @param lower lower probability threshold to claim superiority (in a specific subgroup); the treatment arm will be dropped if it goes below this threshold
+#' @param burnin the initial sample size of before adaptation; the default is 10 times number of treatments
+#' @param RAR whether using responsive adaptive randomization (RAR)
+#' @param minioutcome the minimum meaningful outcome threshold for each subgroup
+#' @param prob.minioutcome the probability threshold of being larger than the minioutcome, treatment arms below this threshold will be dropped
+#' @param N Number of MCMC samples
+#' @param prior.cov the prior covariance for a multivariate normal prior
+#' @param prior.mean the prior mean for a multivariate normal prior
+
 BAE.sim = function(nt, ns, nb = 30,
                    response.type,
                    totaleffect = matrix(c(seq(nt*ns) ), nrow = nt, ncol = ns, byrow = F),  ## input nt treatments for one subpopulation, then nt treatments for the second population
@@ -31,23 +49,7 @@ BAE.sim = function(nt, ns, nb = 30,
                    prior.mean = rep(0, ns*nt) ## notice for binary/count outcome,the prior is on log-odds/log-rate, ie, prior is put one the coef of the model
 ){
 
-  #' @param nt number of treatment arms
-  #' @param ns number of subgroups
-  #' @param nb number of subjects updated at each interim look
-  #' @param response.type either 'binary'(probability), 'count'(lambda) or 'gaussian'
-  #' @param totaleffect vector of total effect sizes: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup
-  #' @param prob.subpopulation the probability of a subject coming from one specific subpopulation. default: rep (1/ns, ns)
-  #' @param prob.trtarm  the (initial) probability of a subject being assigned to a specific treatment arm. default: rep (1/nt, nt)
-  #' @param maxN the maximum sample size, trial will stop when achieving this number
-  #' @param upper upper probability threshold to claim superiority (in a specific subgroup); the treatment arm wins if it goes above this threshold
-  #' @param lower lower probability threshold to claim superiority (in a specific subgroup); the treatment arm will be dropped if it goes below this threshold
-  #' @param burnin the initial sample size of before adaptation; the default is 10 times number of treatments
-  #' @param RAR whether using responsive adaptive randomization (RAR)
-  #' @param minioutcome the minimum meaningful outcome threshold for each subgroup
-  #' @param prob.minioutcome the probability threshold of being larger than the minioutcome, treatment arms below this threshold will be dropped
-  #' @param N Number of MCMC samples
-  #' @param prior.cov the prior covariance for a multivariate normal prior
-  #' @param prior.mean the prior mean for a multivariate normal prior
+
 
 
   # now begin the functions:
