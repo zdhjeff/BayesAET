@@ -3,7 +3,12 @@ An R package for Bayesian adaptive enrichment trials with multiple treatment arm
 Run the following command to install the package:
 
 ```r
-library(devtools) 
+library(devtools)
+library(abind)
+library(reshape2)
+library(rjags)
+library(doParallel)
+library(MASS)
 install_github("zdhjeff/BayesAET")
 ```
 # Example:
