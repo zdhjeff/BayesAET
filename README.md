@@ -5,7 +5,7 @@ Run the following command to install the package and other packages:
 ```r
 library(devtools)
 install_github("zdhjeff/BayesAET")
-
+#install the following pakcages
 library(abind)
 library(reshape2)
 library(rjags)
