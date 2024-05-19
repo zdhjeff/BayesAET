@@ -26,7 +26,7 @@ library(BayesAET)
 #' @param ns number of subgroups
 #' @param nb number of subjects updated at each interim look
 #' @param response.type either 'binary'(probability), 'count'(lambda) or 'gaussian'
-#' @param totaleffect vector of total effect sizes: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup
+#' @param totaleffect matrix of total effect sizes: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup
 #' @param prob.subpopulation the probability of a subject coming from one specific subpopulation. default: rep (1/ns, ns)
 #' @param prob.trtarm  the (initial) probability of a subject being assigned to a specific treatment arm. default: rep (1/nt, nt)
 #' @param maxN the maximum sample size, trial will stop when achieving this number
