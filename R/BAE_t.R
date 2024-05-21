@@ -1,13 +1,13 @@
 
-# library(ggplot2)
-# library(abind)
-# library(reshape2)
-# library(rjags)
-# library(doParallel)
-# library(MASS)
-# library(roxygen2)
-# library(fastDummies)
-# library(abind)
+library(ggplot2)
+library(abind)
+library(reshape2)
+library(rjags)
+library(doParallel)
+library(MASS)
+library(roxygen2)
+library(fastDummies)
+library(abind)
 
 
 #' BAE simulator: this function simulates a Bayesian adaptive enrichment trial
@@ -295,7 +295,7 @@ BAE.sim = function(nt, ns, nb = 30,
     } # note that the first cohort is 0, so when comparing the j interim look, use j+1 data
 
 
-    ##### The above sampling process is done, the following is the decision part, based on the posterior probablity ####
+    ##### The above sampling process is done, the following is the decision part, based on the posterior probability ####
     ### this for loop is for decisions in each subpopulation of ns
     for (i in 1:ns){
 
