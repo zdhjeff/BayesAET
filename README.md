@@ -1,10 +1,16 @@
 # Bayesian-Adaptive-Enrichment-Design
-An R package for Bayesian adaptive enrichment trials with multiple treatment arms and multiple (categorical) subpopulations  <br>
-Run the following command to install the package:
+An R package for Bayesian adaptive enrichment trials with multiple treatment arms and multiple (categorical) subpopulations from the paper "Bayesian adaptive enrichment design for multi-arm clinical trials – an R package"  <br>
+Run the following command to install the package and other packages:
 
 ```r
-library(devtools) 
+library(devtools)
 install_github("zdhjeff/BayesAET")
+#install the following pakcages
+library(abind)
+library(reshape2)
+library(rjags)
+library(doParallel)
+library(MASS)
 ```
 # Example:
 
@@ -20,7 +26,7 @@ library(BayesAET)
 #' @param ns number of subgroups
 #' @param nb number of subjects updated at each interim look
 #' @param response.type either 'binary'(probability), 'count'(lambda) or 'gaussian'
-#' @param totaleffect vector of total effect sizes: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup
+#' @param totaleffect matrix of total effect sizes: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup
 #' @param prob.subpopulation the probability of a subject coming from one specific subpopulation. default: rep (1/ns, ns)
 #' @param prob.trtarm  the (initial) probability of a subject being assigned to a specific treatment arm. default: rep (1/nt, nt)
 #' @param maxN the maximum sample size, trial will stop when achieving this number
