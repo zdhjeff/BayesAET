@@ -146,7 +146,7 @@ BAE.sim = function(nt, ns, nb = 30,
     }
 
     if (response.type == 'gaussian') {
-      yb = apply (trt_sub_b , 1, function(z) totaleffect[z[1], z[2]]) + rnorm(nb,0,1)
+      yb = apply (trt_sub_b , 1, function(z) totaleffect[z[1], z[2]]) + rnorm(nb,0,10)
     }
     if (response.type == 'binary') {
       yb = apply (trt_sub_b , 1, function(z) rbinom(1,1,totaleffect[z[1], z[2]] )  )
