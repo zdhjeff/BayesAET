@@ -112,6 +112,7 @@ BAE.sim = function(nt, ns,
   trt.est = list()
   lowbound=list()
   upbound = list()
+  sd.est = list()
   est= list()
 
   #######################  Start the loop ###########################
@@ -333,7 +334,7 @@ BAE.sim = function(nt, ns,
       ## C1 first stopping criteria
       if (max(prob_superiority[[i]][,j+1]) >= upper[i] & prob_assign[[i]][which.max(prob_superiority[[i]][,j+1])] != 0 ){ # the posterior should larger than threshold and that arm is still in
 
-        prob_assign[[i]] = rep(0, nt)
+        #prob_assign[[i]] = rep(0, nt)
         prob.subpop[i]=0
         #prob_assign[[i]][which.max(prob_superiority[[i]][,j+1])]=1 # once the bset one is picked, all non benzo patients will be assgined to this subgroup
         C1[i]=1 ## this indicates the best subgroup is found
@@ -347,7 +348,6 @@ BAE.sim = function(nt, ns,
         prob_assign[[i]] = rep(0, nt)
         prob.subpop[i]=0
         ########
-        #prob_c=1 # if all subgroups failed, stop recruting non-Benzo patients and take all Benzo patients
 
         C2[i]=1 ## this indicates all subgroups failed
       }
@@ -358,16 +358,29 @@ BAE.sim = function(nt, ns,
       earlystop[i] = (C1[i]==1 | C2[i] ==1) # this means the stop sign for each subpopulation
     }
 
-    if ( sum(earlystop)==ns | length(y) >= maxN) {break}  # this means if all subpopulation meet stop criterion , or sample size is reached, stop the trial
+    if ( sum(earlystop)==ns | length(y) >= maxN) {
+
+      for (i in 1:ns) {
+        if (C1[i]==1) print(sprintf("subgroup %d stopped for having indentified the best treatment", i))
+        if (C2[i]==1) print(sprintf("subgroup %d stopped for futility of all treatments", i))
+      }
+      if (length(y) >= maxN) print("trial stopped for running out of samples")
+      break
+
+      }  # this means if all subpopulation meet stop criterion , or sample size is reached, stop the trial
+
+
+
 
   }
   #### now summarize the outputs ###
 
   for (i in 1:ns) {
     trt.est[[i]] = apply(thetaall[[i]][,,j+1],2,mean) # j+1 because the first is created to store data.
+    sd.est[[i]] = apply(thetaall[[i]][,,j+1],2,sd)
     lowbound[[i]] =apply(thetaall[[i]][,,j+1],2,function(x) quantile(x,0.025))
     upbound[[i]] =apply(thetaall[[i]][,,j+1],2,function(x) quantile(x,0.975))
-    est[[i]] = data.frame(trt.est = trt.est[[i]], lowbound = lowbound[[i]], upbound = upbound[[i]])
+    est[[i]] = data.frame(trt.est = trt.est[[i]], lowbound = lowbound[[i]], upbound = upbound[[i]], sd.est = sd.est[[i]] )
 
     prob_sup_minioutcome[[i]] = prob_sup_minioutcome[[i]][,-1]
     treat_result_record[[i]] =treat_result_record[[i]][,-1]
