@@ -1,6 +1,6 @@
 Package: BayesAET
 Type: Package
-Title: What the Package Does (Title Case)
+Title: An R package for Bayesian adaptive enrichment design in multi-arm clinical trials 
 Version: 0.1.0
 Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
