@@ -29,15 +29,15 @@ library(abind)
 #' @param prior.cov the prior covariance for a multivariate normal prior
 #' @param prior.mean the prior mean for a multivariate normal prior
 
-BAE.sim = function(nt, ns, nb = 30,
+BAE.sim = function(nt, ns,
+                   nb = c(100,40,70,90),
                    response.type,
                    totaleffect = matrix(c(seq(nt*ns) ), nrow = nt, ncol = ns, byrow = F),  ## input nt treatments for one subpopulation, then nt treatments for the second population
                    prob.subpopulation = rep (1/ns, ns),
                    prob.trtarm = rep (1/nt, nt),
-                   maxN = 500,
+                   maxN = 300,
                    upper = rep (0.975, ns),
                    lower = rep (0.1, ns),
-                   burnin = 10*nt,
                    RAR = F,
                    minioutcome = rep(0, ns),
                    prob.minioutcome = rep(0.5, ns),
@@ -120,10 +120,10 @@ BAE.sim = function(nt, ns, nb = 30,
   repeat{
     j = j + 1
 
-    if (j * nb > maxN) nb = maxN - (j-1) *nb
-    x_subpop_b = t(rmultinom(nb, 1, prob = prob.subpop)) # this is the matrix indicating which subpopulation for the patient, in the batch
+    if (sum(nb[1:j]) > maxN) nb[j] = maxN - sum(nb[1:(j-1)])
+    x_subpop_b = t(rmultinom(nb[j], 1, prob = prob.subpop)) # this is the matrix indicating which subpopulation for the patient, in the batch
 
-    x_trtarm_b = matrix( rep(0,nb*nt), nrow = nb, ncol=nt)
+    x_trtarm_b = matrix( rep(0,nb[j]*nt), nrow = nb[j], ncol=nt)
 
     for (i in 1:ns) {
       if (sum(prob_assign[[i]])!= 0){
@@ -137,8 +137,8 @@ BAE.sim = function(nt, ns, nb = 30,
     subpop_ind_b = apply( x_subpop_b, 1, function(z) which(z==1)) # this is the subpopulation indicatior for each nb patient, in the batch
     trt_sub_b = cbind(trtarm_ind_b, subpop_ind_b) # this is the nb* 2 matrix with first col shows the treatment arm, 2nd col shows the subpop, in the batch
 
-    design_b = matrix(rep(0, nt*ns*nb), nrow = nb, ncol = (nt*ns))
-    for (i in 1:nb) {
+    design_b = matrix(rep(0, nt*ns*nb[j]), nrow = nb[j], ncol = (nt*ns))
+    for (i in 1:nb[j]) {
       indmatrix = matrix(rep(0, ns*nt), nrow = ns, ncol = nt)
       indmatrix[trt_sub_b[i,2],trt_sub_b[i,1]] =1
       design_b[i,] = c(t(indmatrix))
@@ -146,7 +146,7 @@ BAE.sim = function(nt, ns, nb = 30,
     }
 
     if (response.type == 'gaussian') {
-      yb = apply (trt_sub_b , 1, function(z) totaleffect[z[1], z[2]]) + rnorm(nb,0,10)
+      yb = apply (trt_sub_b , 1, function(z) totaleffect[z[1], z[2]]) + rnorm(nb[j],0,10)
     }
     if (response.type == 'binary') {
       yb = apply (trt_sub_b , 1, function(z) rbinom(1,1,totaleffect[z[1], z[2]] )  )
@@ -310,14 +310,11 @@ BAE.sim = function(nt, ns, nb = 30,
         check[[i]][,which(prob_assign[[i]]>0)] = t(apply( (thetaall[[i]])[,which(prob_assign[[i]]>0),j+1,drop=F], 1, supority_comp))# sup_check is function to check which one is largest and then return it to 1
       }
 
-      #psup_out[[i]] = abind(psup_out[[i]], apply(check[[i]], 2, mean), along = 2) ## probability of superiority in each treatment
-      if (length(y) < burnin) {
-        prob_superiority[[i]] = abind(prob_superiority[[i]], prob_superiority[[i]][,j], along = 2)
-      } else prob_superiority[[i]] = abind(prob_superiority[[i]], apply(check[[i]], 2, mean), along = 2)
+      prob_superiority[[i]] = abind(prob_superiority[[i]], apply(check[[i]], 2, mean), along = 2)
 
       treat_prob[[i]][which(treat_result[[i]]==0)]=0 ## once the subgroup failed in mini check, it is zero
       treat_prob[[i]][which(treat_result[[i]]==1)]= as.vector( (apply((thetaall_new_split[[i]][,which(treat_result[[i]]==1),drop=F]-minioutcome[i] >=0 ),2,sum))/N ) ## minioutcome_1 is the minimum outcome needed, treatp is the probablity of larger than minioutcome_1
-      treat_result[[i]]=as.numeric(treat_prob[[i]]>prob.minioutcome[i] ) ## whether that the treatment arm is larger than the threshold
+      treat_result[[i]]=as.numeric(treat_prob[[i]]>= prob.minioutcome[i] ) ## whether that the treatment arm is larger than the threshold
       prob_assign[[i]][which(treat_result[[i]]==0)]=0 # this means once the trt fails in mini check, that trt stops receiving subjects
 
       prob_sup_minioutcome[[i]]=abind(prob_sup_minioutcome[[i]],treat_prob[[i]],along = 2) ## this is only to record treat_prob[[i]]
@@ -326,7 +323,7 @@ BAE.sim = function(nt, ns, nb = 30,
       ntj[i] = length(which(prob_superiority[[i]][,j+1]>lower[i] & treat_result[[i]]==1)) ## No. of groups left
       if (ntj[i]!=0){
         prob_assign[[i]] = rep(0, nt)
-        if (RAR == T & length(y)>=burnin & ntj[[i]]>1)  { ## the blow parts "0" may need to be changed to "lower"
+        if (RAR == T  & ntj[[i]]>1)  {
           prob_assign[[i]][which( prob_superiority[[i]][,j+1]>lower[i] & treat_result[[i]]==1)] =
             ((ntj[i] - 1)/ntj[i])*sqrt(prob_superiority[[i]][which(prob_superiority[[i]][,j+1]>lower[i]& treat_result[[i]]==1),j+1])
         } else prob_assign[[i]][which( prob_superiority[[i]][,j+1]>lower[i]& treat_result[[i]]==1)] = 1/ntj[i]
@@ -337,7 +334,8 @@ BAE.sim = function(nt, ns, nb = 30,
       if (max(prob_superiority[[i]][,j+1]) >= upper[i] & prob_assign[[i]][which.max(prob_superiority[[i]][,j+1])] != 0 ){ # the posterior should larger than threshold and that arm is still in
 
         prob_assign[[i]] = rep(0, nt)
-        prob_assign[[i]][which.max(prob_superiority[[i]][,j+1])]=1 # once the bset one is picked, all non benzo patients will be assgined to this subgroup
+        prob.subpop[i]=0
+        #prob_assign[[i]][which.max(prob_superiority[[i]][,j+1])]=1 # once the bset one is picked, all non benzo patients will be assgined to this subgroup
         C1[i]=1 ## this indicates the best subgroup is found
 
         if (which.max(prob_superiority[[i]][,j+1]) == which.max(totaleffect[1:nt,i])) powerind[i]=1 # this indicates the best subgroup was found and it is truely the best
@@ -360,7 +358,7 @@ BAE.sim = function(nt, ns, nb = 30,
       earlystop[i] = (C1[i]==1 | C2[i] ==1) # this means the stop sign for each subpopulation
     }
 
-    if ( sum(earlystop)==ns | length(y) >= maxN) {break}  # this means if all subpopulation meet stop creterion , or sample size is reached, stop the trial
+    if ( sum(earlystop)==ns | length(y) >= maxN) {break}  # this means if all subpopulation meet stop criterion , or sample size is reached, stop the trial
 
   }
   #### now summarize the outputs ###
