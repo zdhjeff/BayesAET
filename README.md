@@ -24,12 +24,12 @@ library(BayesAET)
 
 #' @param nt number of treatment arms
 #' @param ns number of subgroups
+#' @param maxN the maximum sample size, trial will stop when achieving this number
 #' @param nb number of subjects updated at each interim look
 #' @param response.type either 'binary'(probability), 'count'(lambda) or 'gaussian'
 #' @param totaleffect matrix of total effect sizes: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup
 #' @param prob.subpopulation the probability of a subject coming from one specific subpopulation. default: rep (1/ns, ns)
 #' @param prob.trtarm  the (initial) probability of a subject being assigned to a specific treatment arm. default: rep (1/nt, nt)
-#' @param maxN the maximum sample size, trial will stop when achieving this number
 #' @param upper upper probability threshold to claim superiority (in a specific subgroup); the treatment arm wins if it goes above this threshold
 #' @param lower lower probability threshold to claim superiority (in a specific subgroup); the treatment arm will be dropped if it goes below this threshold
 #' @param burnin the initial sample size of before adaptation; the default is 10 times number of treatments
@@ -44,12 +44,13 @@ library(BayesAET)
 nt=3
 ns=2
 
-BayesAET::BAE.sim (nt=3, ns=2, nb = c(40,30,30),
+BayesAET::BAE.sim (nt=3, ns=2,
+                   maxN = 100,
+                   nb = c(40,30,30),
                    response.type = 'gaussian',
                    totaleffect = matrix( c(1,2,2.6, 3,4,4.1 ), nrow = nt, ncol = ns, byrow = F),  ## input nt treatments for one subpopulation, then nt treatments for the second population
                    prob.subpopulation = rep (1/ns, ns), # which population the patient belongs
                    prob.trtarm = rep (1/nt, nt),
-                   maxN = 100,
                    upper = rep (0.985, ns), lower = rep (0.0, ns),
                    RAR = F,
                    minioutcome = rep(3, ns),
