@@ -44,14 +44,13 @@ library(BayesAET)
 nt=3
 ns=2
 
-BayesAET::BAE.sim (nt=3, ns=2, nb = 35,
+BayesAET::BAE.sim (nt=3, ns=2, nb = c(40,30,30),
                    response.type = 'gaussian',
                    totaleffect = matrix( c(1,2,2.6, 3,4,4.1 ), nrow = nt, ncol = ns, byrow = F),  ## input nt treatments for one subpopulation, then nt treatments for the second population
                    prob.subpopulation = rep (1/ns, ns), # which population the patient belongs
                    prob.trtarm = rep (1/nt, nt),
                    maxN = 100,
                    upper = rep (0.985, ns), lower = rep (0.0, ns),
-                   burnin = 10*nt,
                    RAR = F,
                    minioutcome = rep(3, ns),
                    prob.minioutcome = rep(0.6, ns),
