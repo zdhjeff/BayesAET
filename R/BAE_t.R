@@ -21,7 +21,6 @@ library(abind)
 #' @param maxN the maximum sample size, trial will stop when achieving this number
 #' @param upper upper probability threshold to claim superiority (in a specific subgroup); the treatment arm wins if it goes above this threshold
 #' @param lower lower probability threshold to claim superiority (in a specific subgroup); the treatment arm will be dropped if it goes below this threshold
-#' @param burnin the initial sample size of before adaptation; the default is 10 times number of treatments
 #' @param RAR whether using responsive adaptive randomization (RAR)
 #' @param minioutcome the minimum meaningful outcome threshold for each subgroup
 #' @param prob.minioutcome the probability threshold of being larger than the minioutcome, treatment arms below this threshold will be dropped
