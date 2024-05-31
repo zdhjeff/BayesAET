@@ -24,12 +24,12 @@ library(BayesAET)
 
 #' @param nt number of treatment arms
 #' @param ns number of subgroups
+#' @param maxN the maximum sample size, trial will stop when achieving this number
 #' @param nb number of subjects updated at each interim look
 #' @param response.type either 'binary'(probability), 'count'(lambda) or 'gaussian'
 #' @param totaleffect matrix of total effect sizes: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup
 #' @param prob.subpopulation the probability of a subject coming from one specific subpopulation. default: rep (1/ns, ns)
 #' @param prob.trtarm  the (initial) probability of a subject being assigned to a specific treatment arm. default: rep (1/nt, nt)
-#' @param maxN the maximum sample size, trial will stop when achieving this number
 #' @param upper upper probability threshold to claim superiority (in a specific subgroup); the treatment arm wins if it goes above this threshold
 #' @param lower lower probability threshold to claim superiority (in a specific subgroup); the treatment arm will be dropped if it goes below this threshold
 #' @param burnin the initial sample size of before adaptation; the default is 10 times number of treatments
@@ -43,21 +43,21 @@ library(BayesAET)
 ## Gaussian outcome
 nt=3
 ns=2
-
-BayesAET::BAE.sim (nt=3, ns=2, nb = 35,
-                   response.type = 'gaussian',
-                   totaleffect = matrix( c(1,2,2.6, 3,4,4.1 ), nrow = nt, ncol = ns, byrow = F),  ## input nt treatments for one subpopulation, then nt treatments for the second population
-                   prob.subpopulation = rep (1/ns, ns), # which population the patient belongs
-                   prob.trtarm = rep (1/nt, nt),
-                   maxN = 100,
-                   upper = rep (0.985, ns), lower = rep (0.0, ns),
-                   burnin = 10*nt,
-                   RAR = F,
-                   minioutcome = rep(3, ns),
-                   prob.minioutcome = rep(0.6, ns),
-                   N = 3000,
-                   prior.cov = diag(100, ns*nt), prior.mean = rep(0, ns*nt)
-                   )
+set.seed(121)
+            BAE.sim (nt=3, ns=2,
+                     maxN = 300,
+                     nb = c(100,120,80),
+                     response.type = 'gaussian',
+                     totaleffect = matrix( c(8,12,14, 6,8,10 ), nrow = nt, ncol = ns, byrow = F),  
+                     prob.subpopulation = rep (1/ns, ns), # which population the patient belongs
+                     prob.trtarm = rep (1/nt, nt),
+                     upper = rep (0.985, ns), lower = rep (0.0, ns),
+                     RAR = F,
+                     minioutcome = rep(0, ns),
+                     prob.minioutcome = rep(0.6, ns),
+                     N = 3000,
+                     prior.cov = diag(100, ns*nt), prior.mean = rep(0, ns*nt)
+                     )   
 
 #' @return n.interim: number of interim looks conducted to end the whole trial
 #' @return trt_sub: simulated treatment arm allocation (1st column) and subgroup (2nd column)
@@ -70,76 +70,70 @@ BayesAET::BAE.sim (nt=3, ns=2, nb = 35,
 
 ## outputs:
 
+[1] "subgroup 1 stopped for having indentified the best treatment"
+[1] "trial stopped for running out of samples"
 $n.interim
 [1] 3
 
-$trt_sub # showing first 10 rows
+$trt_sub ## first 10 subjects
        trtarm_ind_b subpop_ind_b
-  [1,]            3            2
-  [2,]            2            2
-  [3,]            1            1
-  [4,]            1            1
-  [5,]            3            2
-  [6,]            2            1
-  [7,]            2            1
-  [8,]            2            1
-  [9,]            2            1
- [10,]            1            2
-
+  [1,]            1            2
+  [2,]            2            1
+  [3,]            2            1
+  [4,]            2            1
+  [5,]            1            1
+  [6,]            3            2
+  [7,]            3            2
+  [8,]            3            1
+  [9,]            3            2
+ [10,]            3            2
 
 $est
 $est[[1]]
-             trt.est  lowbound  upbound
-coef_all[1] 1.061081 0.3432057 1.823764
-coef_all[2] 2.151141 1.3548472 2.942625
-coef_all[3] 2.869759 2.5029568 3.229270
+              trt.est  lowbound   upbound   sd.est
+coef_all[1]  6.773359  4.354134  9.230089 1.286652
+coef_all[2] 10.742479  8.249738 13.317220 1.257008
+coef_all[3] 15.442758 12.376759 18.755942 1.646579
 
 $est[[2]]
-             trt.est lowbound  upbound
-coef_all[4] 2.741041 1.793971 3.561921
-coef_all[5] 3.492276 3.114791 3.895053
-coef_all[6] 4.343662 4.053077 4.651546
+              trt.est lowbound  upbound   sd.est
+coef_all[4]  9.021392 6.198901 11.95611 1.435701
+coef_all[5]  8.459410 5.694941 11.54432 1.498696
+coef_all[6] 10.114533 7.061404 12.99339 1.490317
 
 
 $powerind
-[1] 1 1
+[1] 1 0
 
-$y
-  [1] 4.8685329 3.8876538 1.8811077 1.3981059 3.4879736 2.3411197 0.8706369 3.4330237 3.9803999 2.6327785 2.9558654 4.5697196 0.8649454 6.5016178
- [15] 2.5607600 4.6897394 1.0280022 0.2567268 3.1887923 0.1950414 4.0655549 4.1532533 4.7726117 3.4755095 3.2900536 4.7107264 2.0659024 2.7463666
- [29] 2.2914462 3.6567081 4.1011054 2.6743413 3.4104791 2.4313313 0.8648214 4.2254473 3.4993034 5.7782972 3.6874801 1.6277132 4.0253829 2.6274753
- [43] 0.9198173 3.6537509 2.9804009 4.4356172 3.0947958 2.7380527 2.4812080 2.7976843 1.5313073 3.1967868 2.8862349 4.1800917 4.0978188 2.8626455
- [57] 2.8670988 2.5962765 4.1116723 2.1243017 3.3979164 1.6259974 4.7893727 3.0441609 1.3682929 3.0431081 1.7302171 3.1893193 3.3412763 4.0685115
- [71] 4.6825860 4.0874707 3.7251452 4.4178857 3.6111944 6.7586580 5.7802782 4.8795840 4.8132405 3.4571181 4.9857784 3.6514053 2.9919454 5.9831825
- [85] 3.1710289 3.8058035 3.3850497 3.0529242 4.6989751 2.5763851 3.8938110 3.5257046 2.6098340 4.0295826 3.5691205 3.5077746 5.0811162 4.6324094
- [99] 4.0095439 4.1564905
+$y ## first 12 subjects
+  [1]  -0.09567406  15.65333353  -6.35070873  22.09899628   9.27995683   0.82785079  15.75841200  10.42735037   4.18713324  15.25805601  29.91523526   8.39749245
 
 $N_terminate
-[1] 100
+[1] 300
 
 $prob_sup_minioutcome
 $prob_sup_minioutcome[[1]]
-           [,1]      [,2] [,3]
-[1,] 0.00000000 0.0000000    0
-[2,] 0.02366667 0.0000000    0
-[3,] 0.88100000 0.1953333    0
+      [,1] [,2] [,3]
+[1,] 0.995    1    1
+[2,] 1.000    1    1
+[3,] 1.000    1    1
 
 $prob_sup_minioutcome[[2]]
-          [,1]      [,2]      [,3]
-[1,] 0.3140000 0.0000000 0.0000000
-[2,] 0.9883333 0.9916667 0.9956667
-[3,] 0.9996667 1.0000000 1.0000000
+          [,1] [,2] [,3]
+[1,] 1.0000000    1    1
+[2,] 1.0000000    1    1
+[3,] 0.9996667    1    1
 
 
 $prob_superiority
 $prob_superiority[[1]]
-      [,1] [,2] [,3]
-[1,] 0.000    0    0
-[2,] 0.006    0    0
-[3,] 0.994    1    0
+           [,1]         [,2]  [,3]
+[1,] 0.05433333 0.0003333333 0.000
+[2,] 0.20633333 0.0570000000 0.007
+[3,] 0.73933333 0.9426666667 0.993
 
 $prob_superiority[[2]]
-            [,1]  [,2] [,3]
-[1,] 0.002333333 0.000    0
-[2,] 0.064666667 0.057    0
-[3,] 0.933000000 0.943    1
+          [,1]      [,2]      [,3]
+[1,] 0.4726667 0.1423333 0.2353333
+[2,] 0.3336667 0.0480000 0.1476667
+[3,] 0.1936667 0.8096667 0.6170000
