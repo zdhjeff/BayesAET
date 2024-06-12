@@ -15,7 +15,7 @@ library(abind)
 #' @param ns number of subgroups
 #' @param nb number of subjects updated at each interim look
 #' @param response.type either 'binary'(probability), 'count'(lambda) or 'gaussian'
-#' @param totaleffect vector of total effect sizes: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup
+#' @param mean.response vector of mean responses: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup
 #' @param prob.subpopulation the probability of a subject coming from one specific subpopulation. default: rep (1/ns, ns)
 #' @param prob.trtarm  the (initial) probability of a subject being assigned to a specific treatment arm. default: rep (1/nt, nt)
 #' @param maxN the maximum sample size, trial will stop when achieving this number
@@ -31,7 +31,7 @@ library(abind)
 BAE.sim = function(nt, ns,
                    nb = c(100,40,70,90),
                    response.type,
-                   totaleffect = matrix(c(seq(nt*ns) ), nrow = nt, ncol = ns, byrow = F),  ## input nt treatments for one subpopulation, then nt treatments for the second population
+                   mean.response = matrix(c(seq(nt*ns) ), nrow = nt, ncol = ns, byrow = F),  ## input nt treatments for one subpopulation, then nt treatments for the second population
                    prob.subpopulation = rep (1/ns, ns),
                    prob.trtarm = rep (1/nt, nt),
                    maxN = 300,
@@ -146,13 +146,13 @@ BAE.sim = function(nt, ns,
     }
 
     if (response.type == 'gaussian') {
-      yb = apply (trt_sub_b , 1, function(z) totaleffect[z[1], z[2]]) + rnorm(nb[j],0,10)
+      yb = apply (trt_sub_b , 1, function(z) mean.response[z[1], z[2]]) + rnorm(nb[j],0,10)
     }
     if (response.type == 'binary') {
-      yb = apply (trt_sub_b , 1, function(z) rbinom(1,1,totaleffect[z[1], z[2]] )  )
+      yb = apply (trt_sub_b , 1, function(z) rbinom(1,1,mean.response[z[1], z[2]] )  )
     }
     if (response.type == 'count') {
-      yb = apply (trt_sub_b , 1, function(z) rpois(1, totaleffect[z[1], z[2]] )  )
+      yb = apply (trt_sub_b , 1, function(z) rpois(1, mean.response[z[1], z[2]] )  )
     }
 
 
@@ -338,7 +338,7 @@ BAE.sim = function(nt, ns,
         #prob_assign[[i]][which.max(prob_superiority[[i]][,j+1])]=1 # once the bset one is picked, all non benzo patients will be assgined to this subgroup
         C1[i]=1 ## this indicates the best subgroup is found
 
-        if (which.max(prob_superiority[[i]][,j+1]) == which.max(totaleffect[1:nt,i])) powerind[i]=1 # this indicates the best subgroup was found and it is truely the best
+        if (which.max(prob_superiority[[i]][,j+1]) == which.max(mean.response[1:nt,i])) powerind[i]=1 # this indicates the best subgroup was found and it is truely the best
 
       }
 
