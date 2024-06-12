@@ -52,7 +52,7 @@ set.seed(121)
                      prob.subpopulation = rep (1/ns, ns), # which population the patient belongs
                      prob.trtarm = rep (1/nt, nt),
                      upper = rep (0.985, ns), lower = rep (0.0, ns),
-                     RAR = F,
+                     rar = F,
                      minioutcome = rep(0, ns),
                      prob.minioutcome = rep(0.6, ns),
                      N = 3000,
