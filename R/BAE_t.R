@@ -21,7 +21,7 @@ library(abind)
 #' @param maxN the maximum sample size, trial will stop when achieving this number
 #' @param upper upper probability threshold to claim superiority (in a specific subgroup); the treatment arm wins if it goes above this threshold
 #' @param lower lower probability threshold to claim superiority (in a specific subgroup); the treatment arm will be dropped if it goes below this threshold
-#' @param RAR whether using responsive adaptive randomization (RAR)
+#' @param rar whether using responsive adaptive randomization (rar)
 #' @param minioutcome the minimum meaningful outcome threshold for each subgroup
 #' @param prob.minioutcome the probability threshold of being larger than the minioutcome, treatment arms below this threshold will be dropped
 #' @param N Number of MCMC samples
@@ -37,7 +37,7 @@ BAE.sim = function(nt, ns,
                    maxN = 300,
                    upper = rep (0.975, ns),
                    lower = rep (0.1, ns),
-                   RAR = F,
+                   rar = F,
                    minioutcome = rep(0, ns),
                    prob.minioutcome = rep(0.5, ns),
                    N = 3000,
@@ -323,7 +323,7 @@ BAE.sim = function(nt, ns,
       ntj[i] = length(which(prob_superiority[[i]][,j+1]>lower[i] & treat_result[[i]]==1)) ## No. of groups left
       if (ntj[i]!=0){
         prob_assign[[i]] = rep(0, nt)
-        if (RAR == T  & ntj[[i]]>1)  {
+        if (rar == T  & ntj[[i]]>1)  {
           prob_assign[[i]][which( prob_superiority[[i]][,j+1]>lower[i] & treat_result[[i]]==1)] =
             ((ntj[i] - 1)/ntj[i])*sqrt(prob_superiority[[i]][which(prob_superiority[[i]][,j+1]>lower[i]& treat_result[[i]]==1),j+1])
         } else prob_assign[[i]][which( prob_superiority[[i]][,j+1]>lower[i]& treat_result[[i]]==1)] = 1/ntj[i]
