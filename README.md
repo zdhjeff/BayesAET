@@ -27,7 +27,7 @@ library(BayesAET)
 #' @param maxN the maximum sample size, trial will stop when achieving this number
 #' @param nb number of subjects updated at each interim look
 #' @param response.type either 'binary'(probability), 'count'(lambda) or 'gaussian'
-#' @param totaleffect matrix of total effect sizes: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup
+#' @param mean.response matrix of total effect sizes: a nt (row) * ns (col) matrix, with row number indicating treatment and col number indicating subgroup
 #' @param prob.subpopulation the probability of a subject coming from one specific subpopulation. default: rep (1/ns, ns)
 #' @param prob.trtarm  the (initial) probability of a subject being assigned to a specific treatment arm. default: rep (1/nt, nt)
 #' @param upper upper probability threshold to claim superiority (in a specific subgroup); the treatment arm wins if it goes above this threshold
@@ -52,7 +52,7 @@ set.seed(121)
                      prob.subpopulation = rep (1/ns, ns), # which population the patient belongs
                      prob.trtarm = rep (1/nt, nt),
                      upper = rep (0.985, ns), lower = rep (0.0, ns),
-                     RAR = F,
+                     rar = F,
                      minioutcome = rep(0, ns),
                      prob.minioutcome = rep(0.6, ns),
                      N = 3000,
