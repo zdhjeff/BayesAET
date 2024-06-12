@@ -34,8 +34,8 @@ library(BayesAET)
 #' @param lower lower probability threshold to claim superiority (in a specific subgroup); the treatment arm will be dropped if it goes below this threshold
 #' @param burnin the initial sample size of before adaptation; the default is 10 times number of treatments
 #' @param RAR whether using responsive adaptive randomization (RAR)
-#' @param minioutcome the minimum meaningful outcome threshold for each subgroup
-#' @param prob.minioutcome the probability threshold of being larger than the minioutcome, treatment arms below this threshold will be dropped
+#' @param MID the minimum meaningful outcome threshold for each subgroup
+#' @param prob.MID the probability threshold of being larger than the MID, treatment arms below this threshold will be dropped
 #' @param N Number of MCMC samples
 #' @param prior.cov the prior covariance for a multivariate normal prior
 #' @param prior.mean the prior mean for a multivariate normal prior
@@ -48,13 +48,13 @@ set.seed(121)
                      maxN = 300,
                      nb = c(100,120,80),
                      response.type = 'gaussian',
-                     totaleffect = matrix( c(8,12,14, 6,8,10 ), nrow = nt, ncol = ns, byrow = F),  
+                     mean.response = matrix( c(8,12,14, 6,8,10 ), nrow = nt, ncol = ns, byrow = F),  
                      prob.subpopulation = rep (1/ns, ns), # which population the patient belongs
                      prob.trtarm = rep (1/nt, nt),
                      upper = rep (0.985, ns), lower = rep (0.0, ns),
                      rar = F,
-                     minioutcome = rep(0, ns),
-                     prob.minioutcome = rep(0.6, ns),
+                     MID = rep(0, ns),
+                     prob.MID = rep(0.6, ns),
                      N = 3000,
                      prior.cov = diag(100, ns*nt), prior.mean = rep(0, ns*nt)
                      )   
