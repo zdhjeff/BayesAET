@@ -31,6 +31,7 @@ library(abind)
 BAE.sim = function(nt, ns,
                    nb = c(100,40,70,90),
                    response.type,
+                   sig.e = NULL,
                    mean.response = matrix(c(seq(nt*ns) ), nrow = nt, ncol = ns, byrow = F),  ## input nt treatments for one subpopulation, then nt treatments for the second population
                    prob.subpopulation = rep (1/ns, ns),
                    prob.trtarm = rep (1/nt, nt),
@@ -146,7 +147,7 @@ BAE.sim = function(nt, ns,
     }
 
     if (response.type == 'gaussian') {
-      yb = apply (trt_sub_b , 1, function(z) mean.response[z[1], z[2]]) + rnorm(nb[j],0,10)
+      yb = apply (trt_sub_b , 1, function(z) mean.response[z[1], z[2]]) + rnorm(nb[j],0,sig.e)
     }
     if (response.type == 'binary') {
       yb = apply (trt_sub_b , 1, function(z) rbinom(1,1,mean.response[z[1], z[2]] )  )
