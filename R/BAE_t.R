@@ -22,8 +22,8 @@ library(abind)
 #' @param upper upper probability threshold to claim superiority (in a specific subgroup); the treatment arm wins if it goes above this threshold
 #' @param lower lower probability threshold to claim superiority (in a specific subgroup); the treatment arm will be dropped if it goes below this threshold
 #' @param rar whether using responsive adaptive randomization (rar)
-#' @param minioutcome the minimum meaningful outcome threshold for each subgroup
-#' @param prob.minioutcome the probability threshold of being larger than the minioutcome, treatment arms below this threshold will be dropped
+#' @param MID the minimum meaningful outcome threshold for each subgroup
+#' @param prob.MID the probability threshold of being larger than the MID, treatment arms below this threshold will be dropped
 #' @param N Number of MCMC samples
 #' @param prior.cov the prior covariance for a multivariate normal prior
 #' @param prior.mean the prior mean for a multivariate normal prior
@@ -38,8 +38,8 @@ BAE.sim = function(nt, ns,
                    upper = rep (0.975, ns),
                    lower = rep (0.1, ns),
                    rar = F,
-                   minioutcome = rep(0, ns),
-                   prob.minioutcome = rep(0.5, ns),
+                   MID = rep(0, ns),
+                   prob.MID = rep(0.5, ns),
                    N = 3000,
                    prior.cov = diag(100, ns*nt),
                    prior.mean = rep(0, ns*nt) ## notice for binary/count outcome,the prior is on log-odds/log-rate, ie, prior is put one the coef of the model
@@ -313,8 +313,8 @@ BAE.sim = function(nt, ns,
       prob_superiority[[i]] = abind(prob_superiority[[i]], apply(check[[i]], 2, mean), along = 2)
 
       treat_prob[[i]][which(treat_result[[i]]==0)]=0 ## once the subgroup failed in mini check, it is zero
-      treat_prob[[i]][which(treat_result[[i]]==1)]= as.vector( (apply((thetaall_new_split[[i]][,which(treat_result[[i]]==1),drop=F]-minioutcome[i] >=0 ),2,sum))/N ) ## minioutcome_1 is the minimum outcome needed, treatp is the probablity of larger than minioutcome_1
-      treat_result[[i]]=as.numeric(treat_prob[[i]]>= prob.minioutcome[i] ) ## whether that the treatment arm is larger than the threshold
+      treat_prob[[i]][which(treat_result[[i]]==1)]= as.vector( (apply((thetaall_new_split[[i]][,which(treat_result[[i]]==1),drop=F]-MID[i] >=0 ),2,sum))/N ) ## minioutcome_1 is the minimum outcome needed, treatp is the probablity of larger than minioutcome_1
+      treat_result[[i]]=as.numeric(treat_prob[[i]]>= prob.MID[i] ) ## whether that the treatment arm is larger than the threshold
       prob_assign[[i]][which(treat_result[[i]]==0)]=0 # this means once the trt fails in mini check, that trt stops receiving subjects
 
       prob_sup_minioutcome[[i]]=abind(prob_sup_minioutcome[[i]],treat_prob[[i]],along = 2) ## this is only to record treat_prob[[i]]
@@ -408,7 +408,7 @@ BAE.sim = function(nt, ns,
 #' @return powerind: power indicator of whether the best treatment arms is correctly selected in each subgroup
 #' @return y: simlulated outcome
 #' @return N_terminate: the total sample size consumed when trial ends
-#' @return prob_sup_minioutcome: the probability of a treatment large than the minioutcome
+#' @return prob_sup_minioutcome: the probability of a treatment large than the MID
 #' @return prob_superiority: the probability of a treatment being the best among each subgroup
 
 
