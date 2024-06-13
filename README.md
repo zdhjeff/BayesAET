@@ -45,19 +45,19 @@ nt=3
 ns=2
 set.seed(121)
             BAET.sim (nt=3, ns=2,
-                     maxN = 300,
-                     nb = c(100,120,80),
+                     maxN = 500,
+                     nb = rep(50,10),
                      response.type = 'gaussian',
                      sig.e = 10,
                      mean.response = matrix( c(8,12,14, 6,8,10 ), nrow = nt, ncol = ns, byrow = F),  
-                     prob.subpopulation = rep (1/ns, ns), # which population the patient belongs
-                     prob.trtarm = rep (1/nt, nt),
-                     upper = rep (0.985, ns), lower = rep (0.0, ns),
+                     prob.subpopulation = c(0.6,0.4), # which population the patient belongs
+                     prob.trtarm = rep (1/3, 3),
+                     upper = rep (0.9, 2), lower = rep (0.0, 2),
                      rar = F,
-                     MID = rep(0, ns),
+                     MID = rep(6, ns),
                      prob.MID = rep(0.6, ns),
                      N = 3000,
-                     prior.cov = diag(100, ns*nt), prior.mean = rep(0, ns*nt)
+                     prior.cov = diag(25, 3*2), prior.mean = rep(0, 3*2)
                      )   
 
 #' @return n.interim: number of interim looks conducted to end the whole trial
