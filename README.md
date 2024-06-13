@@ -48,6 +48,7 @@ set.seed(121)
                      maxN = 300,
                      nb = c(100,120,80),
                      response.type = 'gaussian',
+                     sig.e = 10,
                      mean.response = matrix( c(8,12,14, 6,8,10 ), nrow = nt, ncol = ns, byrow = F),  
                      prob.subpopulation = rep (1/ns, ns), # which population the patient belongs
                      prob.trtarm = rep (1/nt, nt),
