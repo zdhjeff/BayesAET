@@ -44,7 +44,7 @@ library(BayesAET)
 nt=3
 ns=2
 set.seed(121)
-            BAE.sim (nt=3, ns=2,
+            BAET.sim (nt=3, ns=2,
                      maxN = 300,
                      nb = c(100,120,80),
                      response.type = 'gaussian',
