@@ -28,7 +28,7 @@ library(abind)
 #' @param prior.cov the prior covariance for a multivariate normal prior
 #' @param prior.mean the prior mean for a multivariate normal prior
 
-BAE.sim = function(nt, ns,
+BAET.sim = function(nt, ns,
                    nb = c(100,40,70,90),
                    response.type,
                    sig.e = NULL,
