@@ -24,13 +24,13 @@ library(abind)
 #' @param rar whether using responsive adaptive randomization (rar)
 #' @param MID the minimum meaningful outcome threshold for each subgroup
 #' @param prob.MID the probability threshold of being larger than the MID, treatment arms below this threshold will be dropped
-#' @param N Number of MCMC samples
+#' @param N.MCMC Number of MCMC samples
 #' @param prior.cov the prior covariance for a multivariate normal prior
 #' @param prior.mean the prior mean for a multivariate normal prior
 
 BAET.sim = function(nt, ns,
                    ss.interim = c(100,140,180),
-                   response.type,
+                   response.type = "gaussian",
                    sig.e = NULL,
                    mean.response = matrix(c(seq(nt*ns) ), nrow = nt, ncol = ns, byrow = F),  ## input nt treatments for one subpopulation, then nt treatments for the second population
                    prob.subpopulation = rep (1/ns, ns),
@@ -41,7 +41,7 @@ BAET.sim = function(nt, ns,
                    rar = F,
                    MID = rep(0, ns),
                    prob.MID = rep(0.5, ns),
-                   N = 3000,
+                   N.MCMC = 3000,
                    prior.cov = diag(100, ns*nt),
                    prior.mean = rep(0, ns*nt) ## notice for binary/count outcome,the prior is on log-odds/log-rate, ie, prior is put one the coef of the model
 ){
@@ -77,8 +77,8 @@ BAET.sim = function(nt, ns,
   treat_result = list()
 
   for (i in 1:ns) {
-    check[[i]] = array(0, dim = c(N, nt)) # check the which MCMC samples are the largest, and return it to 1 for that treatment
-    thetaall[[i]] = array (rep(0,N*nt), dim = c(N, nt))
+    check[[i]] = array(0, dim = c(N.MCMC, nt)) # check the which MCMC samples are the largest, and return it to 1 for that treatment
+    thetaall[[i]] = array (rep(0,N.MCMC*nt), dim = c(N.MCMC, nt))
     prob_superiority[[i]] = array(rep(1/nt, nt), dim = c(nt, 1))
     prob_assign[[i]] =  prob.trtarm
     treat_prob[[i]] = rep(1,nt)
@@ -191,7 +191,7 @@ BAET.sim = function(nt, ns,
         attempt = attempt + 1
       }
       update(jags, 5500) # more burn-in
-      my.samples = coda.samples(jags, variable.names = "coef_all", n.iter = N)
+      my.samples = coda.samples(jags, variable.names = "coef_all", n.iter = N.MCMC)
       samples = my.samples[[1]]
       thetaall_new<- samples # theta_new stores the total effect, with seq t1s1,t2s1,t3s1, t1s2,t2s2,t3s2...
       thetaall_new<-as.data.frame(thetaall_new)
@@ -230,7 +230,7 @@ BAET.sim = function(nt, ns,
         attempt = attempt + 1
       }
       update(jags, 5500) # more burn-in
-      my.samples = coda.samples(jags, variable.names = "coef_all", n.iter = N)
+      my.samples = coda.samples(jags, variable.names = "coef_all", n.iter = N.MCMC)
       samples = my.samples[[1]]
       thetaall_new<- samples # theta_new stores the total effect but in log-odd, with seq t1s1,t2s1,t3s1, t1s2,t2s2,t3s2...
       thetaall_new<- exp(thetaall_new)/(exp(thetaall_new) +1) # convert the log-odd to probability
@@ -268,7 +268,7 @@ BAET.sim = function(nt, ns,
         attempt = attempt + 1
       }
       update(jags, 5500) # more burn-in
-      my.samples = coda.samples(jags, variable.names = "coef_all", n.iter = N)
+      my.samples = coda.samples(jags, variable.names = "coef_all", n.iter = N.MCMC)
       samples = my.samples[[1]]
       thetaall_new<- samples # theta_new stores the total effect but in log-rate, with seq t1s1,t2s1,t3s1, t1s2,t2s2,t3s2...
       thetaall_new<- exp(thetaall_new) # convert the log-rate to rate
@@ -294,7 +294,7 @@ BAET.sim = function(nt, ns,
       }
 
       if(sum(prob_assign[[i]]>0) ==1){ # this means only one treatment left
-        check[[i]][,which(prob_assign[[i]]>0)] = rep(1,N)
+        check[[i]][,which(prob_assign[[i]]>0)] = rep(1,N.MCMC)
       }
       else if(sum(prob_assign[[i]]>0) > 1){
         check[[i]][,which(prob_assign[[i]]>0)] = t(apply( (thetaall[[i]])[,which(prob_assign[[i]]>0),j+1,drop=F], 1, supority_comp))# sup_check is function to check which one is largest and then return it to 1
@@ -303,7 +303,7 @@ BAET.sim = function(nt, ns,
       prob_superiority[[i]] = abind(prob_superiority[[i]], apply(check[[i]], 2, mean), along = 2)
 
       treat_prob[[i]][which(treat_result[[i]]==0)]=0 ## once the subgroup failed in mini check, it is zero
-      treat_prob[[i]][which(treat_result[[i]]==1)]= as.vector( (apply((thetaall_new_split[[i]][,which(treat_result[[i]]==1),drop=F]-MID[i] >=0 ),2,sum))/N ) ## minioutcome_1 is the minimum outcome needed, treatp is the probablity of larger than minioutcome_1
+      treat_prob[[i]][which(treat_result[[i]]==1)]= as.vector( (apply((thetaall_new_split[[i]][,which(treat_result[[i]]==1),drop=F]-MID[i] >=0 ),2,sum))/N.MCMC ) ## minioutcome_1 is the minimum outcome needed, treatp is the probablity of larger than minioutcome_1
       treat_result[[i]]=as.numeric(treat_prob[[i]]>= prob.MID[i] ) ## whether that the treatment arm is larger than the threshold
       prob_assign[[i]][which(treat_result[[i]]==0)]=0 # this means once the trt fails in mini check, that trt stops receiving subjects
 
