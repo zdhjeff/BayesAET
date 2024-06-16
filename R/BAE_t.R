@@ -10,7 +10,7 @@ library(fastDummies)
 library(abind)
 library(BayesAET)
 
-#' BAE simulator: this function simulates a Bayesian adaptive enrichment trial
+#' BAET simulator: this function simulates a Bayesian adaptive enrichment trial
 #' @param nt number of treatment arms
 #' @param ns number of subgroups
 #' @param nb number of subjects updated at each interim look
