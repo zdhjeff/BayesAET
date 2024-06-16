@@ -46,7 +46,7 @@ ns=2
 set.seed(121)
             BAET.sim (nt=3, ns=2,
                      maxN = 500,
-                     nb = rep(50,10),
+                     ss.interim = c(50,100,150,200,250,300,350,400,450),
                      response.type = 'gaussian',
                      sig.e = 10,
                      mean.response = matrix( c(8,12,14, 6,8,10 ), nrow = nt, ncol = ns, byrow = F),  
