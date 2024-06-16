@@ -7,7 +7,6 @@ library(doParallel)
 library(MASS)
 library(roxygen2)
 library(fastDummies)
-library(abind)
 
 #' BAET simulator: this function simulates a Bayesian adaptive enrichment trial
 #' @param nt number of treatment arms
