@@ -7,6 +7,7 @@ library(doParallel)
 library(MASS)
 library(roxygen2)
 library(fastDummies)
+library(parallel)
 
 #' BAET simulator: this function simulates a Bayesian adaptive enrichment trial
 #' @param nt number of treatment arms
@@ -406,7 +407,7 @@ BAET.sim = function(nt, ns,
 #' @param n.cores number of cores for computation
 
 Multi.BAET= function(n.sim,
-                     n.cores=3,
+                     n.cores=detectCores()/2,
                      nt=3, ns=2,
                      ss.interim = c(100,250),
                      response.type = 'gaussian',
