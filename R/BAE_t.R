@@ -29,7 +29,7 @@ library(abind)
 #' @param prior.mean the prior mean for a multivariate normal prior
 
 BAET.sim = function(nt, ns,
-                   nb = c(100,40,70,90),
+                   ss.interim = c(100,140,180),
                    response.type,
                    sig.e = NULL,
                    mean.response = matrix(c(seq(nt*ns) ), nrow = nt, ncol = ns, byrow = F),  ## input nt treatments for one subpopulation, then nt treatments for the second population
@@ -69,41 +69,25 @@ BAET.sim = function(nt, ns,
 
 
   check = list() # check results for each subpopualtion (ns), for the nt treatments
+  thetaall<-list()
+  prob_superiority = list ()# posterior probability outputs, in each ns subpopulation
+  prob_assign = list()
+  prob.subpop=prob.subpopulation
+  treat_prob = list()
+  treat_result = list()
+
   for (i in 1:ns) {
     check[[i]] = array(0, dim = c(N, nt)) # check the which MCMC samples are the largest, and return it to 1 for that treatment
-  }
-
-  thetaall<-list()
-  for (i in 1:ns) {
     thetaall[[i]] = array (rep(0,N*nt), dim = c(N, nt))
-  }
-
-
-  prob_superiority = list ()# posterior probability outputs, in each ns subpopulation
-  for (i in 1:ns) {
     prob_superiority[[i]] = array(rep(1/nt, nt), dim = c(nt, 1))
-  }
-
-  prob_assign = list()
-  for (i in 1:ns) {
     prob_assign[[i]] =  prob.trtarm
-  }
-  prob.subpop=prob.subpopulation
-
-  treat_prob = list()
-  for (i in 1:ns) {
     treat_prob[[i]] = rep(1,nt)
-  }
-  prob_sup_minioutcome = treat_prob ## the records for each interim look of treatprob
-
-  treat_result = list()
-  for (i in 1:ns) {
     treat_result[[i]] = rep(1,nt)
   }
   treat_result_record = treat_result # the records for each interim look of treat_result
+  prob_sup_minioutcome = treat_prob ## the records for each interim look of treatprob
 
   ntj = rep(0,ns)
-
   powerind = rep(0, ns) # power indicator for each subpopulation
   C1 = rep(0, ns) # Creteria 1 indicator for each subpopulation
   C2 = rep(0, ns) # Creteria 2 indicator for each subpopulation
@@ -114,10 +98,15 @@ BAET.sim = function(nt, ns,
   upbound = list()
   sd.est = list()
   est= list()
+  ss.interim.ext = c(ss.interim, maxN)
+  nb = rep(0, length(ss.interim.ext)) ## this is the batch sample size
+  nb[1] = ss.interim.ext[1]
+  for (i in 2: (length(ss.interim.ext))) {
+    nb[i] = ss.interim.ext[i] - ss.interim.ext[i-1]
+  }
 
-  #######################  Start the loop ###########################
   j = 0
-
+  #######################  Start the loop ###########################
   repeat{
     j = j + 1
 
