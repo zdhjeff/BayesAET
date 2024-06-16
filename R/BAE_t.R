@@ -404,96 +404,96 @@ BAET.sim = function(nt, ns,
 
 
 
-
-Multi.BAET= function(n.sim,
-                     n.cores=3,
-                     nt=3, ns=2,
-                     ss.interim = c(100,250),
-                     response.type = 'gaussian',
-                     sig.e = 10,
-                     mean.response = matrix( c(8,12,14, 5,8,11 ), nrow = nt, ncol = ns, byrow = F),  ## input nt treatments for one subpopulation, then nt treatments for the second population
-                     prob.subpopulation = c(0.6,0.4), # which population the patient belongs
-                     prob.trtarm = rep (1/nt, nt),
-                     maxN = 300,
-                     upper = rep (0.9, ns), lower = rep (0.0, ns),
-                     rar = T,
-                     MID = rep(6, ns),
-                     prob.MID = rep(0.5, ns),
-                     N.MCMC = 5000,
-                     prior.cov = diag(25, ns*nt), prior.mean = c(8, 12, 14, 5, 8, 11) ){
-
-  start = Sys.time()
-  registerDoParallel(cores=n.cores)
-  mt1 = foreach(i=1:n.sim, .packages = c("rjags","boot","abind","tibble", "MASS", "matlib", "BayesAET"), .combine = "cbind") %dopar% {
-
-    test= BAET.sim (nt=3, ns=2,
-                    ss.interim = c(100,250),
-                    response.type = 'gaussian',
-                    sig.e = 10,
-                    mean.response = matrix( c(8,12,14, 5,8,11 ), nrow = nt, ncol = ns, byrow = F),  ## input nt treatments for one subpopulation, then nt treatments for the second population
-                    prob.subpopulation = c(0.6,0.4), # which population the patient belongs
-                    prob.trtarm = rep (1/nt, nt),
-                    maxN = 300,
-                    upper = rep (0.9, ns), lower = rep (0.0, ns),
-                    rar = T,
-                    MID = rep(6, ns),
-                    prob.MID = rep(0.5, ns),
-                    N.MCMC = 5000,
-                    prior.cov = diag(25, ns*nt), prior.mean = c(8, 12, 14, 5, 8, 11)
-    )
-
-
-    nint=test$n.interim
-    est = matrix(rep(0, nt*ns), nrow =ns, ncol = nt)
-    for (i in 1:ns){
-      est[i,] = unlist(test$est[[i]])[1:nt]
-    }
-
-    sd = matrix(rep(0, nt*ns), nrow =ns, ncol = nt)
-    for (i in 1:ns){
-      sd[i,] = unlist(test$est[[i]])[(3*nt+1):(3*nt+3)]
-    }
-
-    ss.sub = c()
-    for (i in 1:ns) {
-      ss.sub[i] =sum (test$trt_sub[,2] == i)
-    }
-    N_terminate = test$N_terminate
-    power = test$powerind
-
-    out= list(est, sd, ss.sub, as.vector (N_terminate), as.vector(power) )
-    class(out) = 'trial'
-    return(out)
-  }
-
-  #treatment mean
-  stacked_matrices_est <- abind(mt1[1,], along = 3)
-  est = apply(stacked_matrices_est, c(1, 2), mean)
-  # treament sd
-  stacked_matrices_sd <- abind(mt1[2,], along = 3)
-  sd = apply(stacked_matrices_sd, c(1, 2), mean)
-  # ss.sub
-  ss.sub.dist = abind(mt1[3,], along = 2)
-  ss.sub.mean= apply (ss.sub.dist,1,mean)
-  # total.ss
-  ss.t.dist = abind(mt1[4,],along = 1)
-  ss.t.mean = mean(ss.t.dist)
-  # power
-  power.sub.dist = abind(mt1[5,], along = 2)
-  power.sub= apply (power.sub.dist,1,mean)
-
-  Sys.time()-start
-
-  computation.time = Sys.time()-start
-  out = list ( est = est, sd =sd,
-               ss.sub.dist = ss.sub.dist, ss.sub.mean=ss.sub.mean,
-               ss.t.dist = ss.t.dist, ss.t.mean =ss.t.mean,
-               power.sub = power.sub ,
-               computation.time = computation.time)
-
-  return(out)
-
-}
+#
+# Multi.BAET= function(n.sim,
+#                      n.cores=3,
+#                      nt=3, ns=2,
+#                      ss.interim = c(100,250),
+#                      response.type = 'gaussian',
+#                      sig.e = 10,
+#                      mean.response = matrix( c(8,12,14, 5,8,11 ), nrow = nt, ncol = ns, byrow = F),  ## input nt treatments for one subpopulation, then nt treatments for the second population
+#                      prob.subpopulation = c(0.6,0.4), # which population the patient belongs
+#                      prob.trtarm = rep (1/nt, nt),
+#                      maxN = 300,
+#                      upper = rep (0.9, ns), lower = rep (0.0, ns),
+#                      rar = T,
+#                      MID = rep(6, ns),
+#                      prob.MID = rep(0.5, ns),
+#                      N.MCMC = 5000,
+#                      prior.cov = diag(25, ns*nt), prior.mean = c(8, 12, 14, 5, 8, 11) ){
+#
+#   start = Sys.time()
+#   registerDoParallel(cores=n.cores)
+#   mt1 = foreach(i=1:n.sim, .packages = c("rjags","boot","abind","tibble", "MASS", "matlib", "BayesAET"), .combine = "cbind") %dopar% {
+#
+#     test= BAET.sim (nt=3, ns=2,
+#                     ss.interim = c(100,250),
+#                     response.type = 'gaussian',
+#                     sig.e = 10,
+#                     mean.response = matrix( c(8,12,14, 5,8,11 ), nrow = nt, ncol = ns, byrow = F),  ## input nt treatments for one subpopulation, then nt treatments for the second population
+#                     prob.subpopulation = c(0.6,0.4), # which population the patient belongs
+#                     prob.trtarm = rep (1/nt, nt),
+#                     maxN = 300,
+#                     upper = rep (0.9, ns), lower = rep (0.0, ns),
+#                     rar = T,
+#                     MID = rep(6, ns),
+#                     prob.MID = rep(0.5, ns),
+#                     N.MCMC = 5000,
+#                     prior.cov = diag(25, ns*nt), prior.mean = c(8, 12, 14, 5, 8, 11)
+#     )
+#
+#
+#     nint=test$n.interim
+#     est = matrix(rep(0, nt*ns), nrow =ns, ncol = nt)
+#     for (i in 1:ns){
+#       est[i,] = unlist(test$est[[i]])[1:nt]
+#     }
+#
+#     sd = matrix(rep(0, nt*ns), nrow =ns, ncol = nt)
+#     for (i in 1:ns){
+#       sd[i,] = unlist(test$est[[i]])[(3*nt+1):(3*nt+3)]
+#     }
+#
+#     ss.sub = c()
+#     for (i in 1:ns) {
+#       ss.sub[i] =sum (test$trt_sub[,2] == i)
+#     }
+#     N_terminate = test$N_terminate
+#     power = test$powerind
+#
+#     out= list(est, sd, ss.sub, as.vector (N_terminate), as.vector(power) )
+#     class(out) = 'trial'
+#     return(out)
+#   }
+#
+#   #treatment mean
+#   stacked_matrices_est <- abind(mt1[1,], along = 3)
+#   est = apply(stacked_matrices_est, c(1, 2), mean)
+#   # treament sd
+#   stacked_matrices_sd <- abind(mt1[2,], along = 3)
+#   sd = apply(stacked_matrices_sd, c(1, 2), mean)
+#   # ss.sub
+#   ss.sub.dist = abind(mt1[3,], along = 2)
+#   ss.sub.mean= apply (ss.sub.dist,1,mean)
+#   # total.ss
+#   ss.t.dist = abind(mt1[4,],along = 1)
+#   ss.t.mean = mean(ss.t.dist)
+#   # power
+#   power.sub.dist = abind(mt1[5,], along = 2)
+#   power.sub= apply (power.sub.dist,1,mean)
+#
+#   Sys.time()-start
+#
+#   computation.time = Sys.time()-start
+#   out = list ( est = est, sd =sd,
+#                ss.sub.dist = ss.sub.dist, ss.sub.mean=ss.sub.mean,
+#                ss.t.dist = ss.t.dist, ss.t.mean =ss.t.mean,
+#                power.sub = power.sub ,
+#                computation.time = computation.time)
+#
+#   return(out)
+#
+# }
 
 
 
