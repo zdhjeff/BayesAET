@@ -401,7 +401,9 @@ BAET.sim = function(nt, ns,
 
 
 
-
+#' Multi.BAET: this function simulates the properties of Bayesian adaptive enrichment trial
+#' @param n.sim number of simulations
+#' @param n.cores number of cores for computation
 
 Multi.BAET= function(n.sim,
                      n.cores=3,
@@ -424,20 +426,20 @@ Multi.BAET= function(n.sim,
   registerDoParallel(cores=n.cores)
   mt1 = foreach(i=1:n.sim, .packages = c("rjags","boot","abind","tibble", "MASS", "matlib"), .combine = "cbind") %dopar% {
 
-    test= BAET.sim (nt=3, ns=2,
-                    ss.interim = c(100,250),
-                    response.type = 'gaussian',
-                    sig.e = 10,
-                    mean.response = matrix( c(8,12,14, 5,8,11 ), nrow = nt, ncol = ns, byrow = F),  ## input nt treatments for one subpopulation, then nt treatments for the second population
-                    prob.subpopulation = c(0.6,0.4), # which population the patient belongs
-                    prob.trtarm = rep (1/nt, nt),
-                    maxN = 300,
-                    upper = rep (0.9, ns), lower = rep (0.0, ns),
-                    rar = T,
-                    MID = rep(6, ns),
-                    prob.MID = rep(0.5, ns),
-                    N.MCMC = 5000,
-                    prior.cov = diag(25, ns*nt), prior.mean = c(8, 12, 14, 5, 8, 11)
+    test= BAET.sim (nt=nt, ns=ns,
+                    ss.interim = ss.interim,
+                    response.type = response.type,
+                    sig.e = sig.e,
+                    mean.response = mean.response,
+                    prob.subpopulation = prob.subpopulation,
+                    prob.trtarm = prob.trtarm,
+                    maxN = maxN,
+                    upper =  upper, lower = lower,
+                    rar = rar,
+                    MID = MID,
+                    prob.MID = prob.MID,
+                    N.MCMC = N.MCMC,
+                    prior.cov = prior.cov, prior.mean = prior.mean
     )
 
 
