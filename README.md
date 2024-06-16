@@ -44,20 +44,20 @@ library(BayesAET)
 nt=3
 ns=2
 set.seed(121)
-            BAE.sim (nt=3, ns=2,
-                     maxN = 300,
-                     nb = c(100,120,80),
+            BAET.sim (nt=3, ns=2,
+                     maxN = 500,
+                     nb = rep(50,10),
                      response.type = 'gaussian',
                      sig.e = 10,
                      mean.response = matrix( c(8,12,14, 6,8,10 ), nrow = nt, ncol = ns, byrow = F),  
-                     prob.subpopulation = rep (1/ns, ns), # which population the patient belongs
-                     prob.trtarm = rep (1/nt, nt),
-                     upper = rep (0.985, ns), lower = rep (0.0, ns),
+                     prob.subpopulation = c(0.6,0.4), # which population the patient belongs
+                     prob.trtarm = rep (1/3, 3),
+                     upper = rep (0.9, 2), lower = rep (0.0, 2),
                      rar = F,
-                     MID = rep(0, ns),
+                     MID = rep(6, ns),
                      prob.MID = rep(0.6, ns),
-                     N = 3000,
-                     prior.cov = diag(100, ns*nt), prior.mean = rep(0, ns*nt)
+                     N = 5000,
+                     prior.cov = diag(25, 3*2), prior.mean = rep(0, 3*2)
                      )   
 
 #' @return n.interim: number of interim looks conducted to end the whole trial
@@ -71,70 +71,64 @@ set.seed(121)
 
 ## outputs:
 
-[1] "subgroup 1 stopped for having indentified the best treatment"
-[1] "trial stopped for running out of samples"
-$n.interim
-[1] 3
+[1] "subgroup 1 stopped for having identified the best treatment"
+[1] "subgroup 2 stopped for having identified the best treatment"
 
-$trt_sub ## first 10 subjects
+$n.interim
+[1] 5
+
+$trt_sub ## first 8 subjects
        trtarm_ind_b subpop_ind_b
-  [1,]            1            2
-  [2,]            2            1
-  [3,]            2            1
-  [4,]            2            1
-  [5,]            1            1
+  [1,]            3            1
+  [2,]            3            2
+  [3,]            1            1
+  [4,]            3            1
+  [5,]            3            1
   [6,]            3            2
-  [7,]            3            2
-  [8,]            3            1
-  [9,]            3            2
- [10,]            3            2
+  [7,]            1            1
+  [8,]            2            1
 
 $est
 $est[[1]]
-              trt.est  lowbound   upbound   sd.est
-coef_all[1]  6.773359  4.354134  9.230089 1.286652
-coef_all[2] 10.742479  8.249738 13.317220 1.257008
-coef_all[3] 15.442758 12.376759 18.755942 1.646579
-
+             trt.est  lowbound  upbound   sd.est
+coef_all[1]  9.04469  6.938137 11.12762 1.077385
+coef_all[2] 11.59883  9.273831 13.94035 1.169261
+coef_all[3] 13.59672 11.619224 15.48728 1.001275
 $est[[2]]
-              trt.est lowbound  upbound   sd.est
-coef_all[4]  9.021392 6.198901 11.95611 1.435701
-coef_all[5]  8.459410 5.694941 11.54432 1.498696
-coef_all[6] 10.114533 7.061404 12.99339 1.490317
-
+              trt.est  lowbound   upbound   sd.est
+coef_all[4] -1.485817 -8.000615  5.235671 3.412195
+coef_all[5]  3.290585 -2.829907  9.580506 3.161698
+coef_all[6]  8.374851  4.739800 11.623587 1.772523
 
 $powerind
-[1] 1 0
+[1] 1 1
 
-$y ## first 12 subjects
-  [1]  -0.09567406  15.65333353  -6.35070873  22.09899628   9.27995683   0.82785079  15.75841200  10.42735037   4.18713324  15.25805601  29.91523526   8.39749245
+$y ## first 8 subjects
+[1]   6.86801127  14.39916139   5.94572116   8.02465238 -15.15689113   3.42099250  -1.53051597  21.55037733
 
 $N_terminate
-[1] 300
+[1] 250
 
 $prob_sup_minioutcome
 $prob_sup_minioutcome[[1]]
-      [,1] [,2] [,3]
-[1,] 0.995    1    1
-[2,] 1.000    1    1
-[3,] 1.000    1    1
-
+          [,1]      [,2]      [,3]      [,4]      [,5]
+[1,] 0.6136667 0.9603333 0.9946667 0.9953333 0.9993333
+[2,] 0.8650000 0.9103333 0.9986667 1.0000000 1.0000000
+[3,] 0.6616667 0.9380000 1.0000000 1.0000000 1.0000000
 $prob_sup_minioutcome[[2]]
-          [,1] [,2] [,3]
-[1,] 1.0000000    1    1
-[2,] 1.0000000    1    1
-[3,] 0.9996667    1    1
-
+           [,1]      [,2]  [,3]      [,4]      [,5]
+[1,] 0.01966667 0.0000000 0.000 0.0000000 0.0000000
+[2,] 0.24066667 0.0000000 0.000 0.0000000 0.0000000
+[3,] 0.70533333 0.9273333 0.907 0.9186667 0.9086667
 
 $prob_superiority
 $prob_superiority[[1]]
-           [,1]         [,2]  [,3]
-[1,] 0.05433333 0.0003333333 0.000
-[2,] 0.20633333 0.0570000000 0.007
-[3,] 0.73933333 0.9426666667 0.993
-
+          [,1]      [,2]       [,3]        [,4]         [,5]
+[1,] 0.2363333 0.3866667 0.07633333 0.009333333 0.0006666667
+[2,] 0.5110000 0.2546667 0.19833333 0.163333333 0.0916666667
+[3,] 0.2526667 0.3586667 0.72533333 0.827333333 0.9076666667
 $prob_superiority[[2]]
-          [,1]      [,2]      [,3]
-[1,] 0.4726667 0.1423333 0.2353333
-[2,] 0.3336667 0.0480000 0.1476667
-[3,] 0.1936667 0.8096667 0.6170000
+           [,1] [,2] [,3] [,4] [,5]
+[1,] 0.01966667    0    0    0    0
+[2,] 0.17233333    0    0    0    0
+[3,] 0.80800000    1    1    1    1
