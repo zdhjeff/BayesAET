@@ -496,7 +496,14 @@ Multi.BAET= function(n.sim,
 }
 
 
-
+#' @return est: the posterior mean of each treatment (col) in each subpopulation (row); e.g. est[1,2] is treatment 2 in subpopulation 1
+#' @return sd: the posterior sd of each treatment (col) in each subpopulation (row)
+#' @return ss.sub.dist: the sample size distribution for each subpopualtion (row)
+#' @return ss.sub.mean: the expected (mean) sample size for each subpopulation
+#' @return ss.t.dist: the sample size distribution for the whole trial
+#' @return ss.t.mean: the mean total sample size for the whole trial
+#' @return power.sub: the power for each subpopulation
+#' @return computation.time: the overall simulation time used
 
 
 
