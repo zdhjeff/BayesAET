@@ -404,7 +404,7 @@ BAET.sim = function(nt, ns,
 
 #' Multi.BAET: this function simulates the properties of Bayesian adaptive enrichment trial
 #' @param n.sim number of simulations
-#' @param n.cores number of cores for computation
+#' @param n.cores number of cores for computation, default is half of the total cores
 
 Multi.BAET= function(n.sim,
                      n.cores=detectCores()/2,
