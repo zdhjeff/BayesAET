@@ -132,3 +132,25 @@ $prob_superiority[[2]]
 [1,] 0.01966667    0    0    0    0
 [2,] 0.17233333    0    0    0    0
 [3,] 0.80800000    1    1    1    1
+
+
+
+
+
+          Multi.BAET(n.sim = 10000,
+                     n.cores=48,
+                     nt=3, ns=2,
+                     ss.interim = c(100,180,300),
+                     response.type = 'gaussian',
+                     sig.e = 10,
+                     mean.response = matrix( c(8,12,14, 5,8,11 ), nrow = nt, ncol = ns, byrow = F),  
+                     prob.subpopulation = c(0.6,0.4), # which population the patient belongs
+                     prob.trtarm = rep (1/nt, nt),
+                     maxN = 390,
+                     upper = rep (0.9, ns), lower = rep (0.0, ns),
+                     rar = F,
+                     MID = rep(6, ns),
+                     prob.MID = rep(0.5, ns),
+                     N.MCMC = 5000,
+                     prior.cov = diag(25, ns*nt), prior.mean = c(8, 12, 14, 5, 8, 11) )
+
