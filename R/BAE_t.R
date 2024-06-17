@@ -487,9 +487,9 @@ Multi.BAET= function(n.sim,
 
   computation.time = Sys.time()-start
   out = list ( est.mean = est, est.sd =sd,
-               #ss.sub.dist = ss.sub.dist,
+               ss.sub.dist = ss.sub.dist,
                ss.sub.mean=ss.sub.mean,
-               #ss.t.dist = ss.t.dist,
+               ss.t.dist = ss.t.dist,
                ss.t.mean =ss.t.mean,
                power.sub = power.sub ,
                computation.time = computation.time)
