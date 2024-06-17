@@ -136,21 +136,52 @@ $prob_superiority[[2]]
 
 
 
+### Multiple simulation example with 'Multi.BAET':
+Multi.BAET(n.sim = 5,
+           n.cores=3,
+           nt=3, ns=2,
+           ss.interim = c(100,180,300),
+           response.type = 'gaussian',
+           sig.e = 10,
+           mean.response = matrix( c(8,12,14, 5,8,11 ), nrow = nt, ncol = ns, byrow = F),  
+           prob.subpopulation = c(0.6,0.4), # which population the patient belongs
+           prob.trtarm = rep (1/nt, nt),
+           maxN = 390,
+           upper = rep (0.9, ns), lower = rep (0.0, ns),
+           rar = F,
+           MID = rep(6, ns),
+           prob.MID = rep(0.5, ns),
+           N.MCMC = 5000,
+           prior.cov = diag(25, ns*nt), prior.mean = c(8, 12, 14, 5, 8, 11) )
+          
 
-          Multi.BAET(n.sim = 10000,
-                     n.cores=48,
-                     nt=3, ns=2,
-                     ss.interim = c(100,180,300),
-                     response.type = 'gaussian',
-                     sig.e = 10,
-                     mean.response = matrix( c(8,12,14, 5,8,11 ), nrow = nt, ncol = ns, byrow = F),  
-                     prob.subpopulation = c(0.6,0.4), # which population the patient belongs
-                     prob.trtarm = rep (1/nt, nt),
-                     maxN = 390,
-                     upper = rep (0.9, ns), lower = rep (0.0, ns),
-                     rar = F,
-                     MID = rep(6, ns),
-                     prob.MID = rep(0.5, ns),
-                     N.MCMC = 5000,
-                     prior.cov = diag(25, ns*nt), prior.mean = c(8, 12, 14, 5, 8, 11) )
+$est.mean
+         [,1]     [,2]     [,3]
+[1,] 8.091625 12.59346 14.53971
+[2,] 4.523138  6.79824 11.10552
 
+$est.sd
+         [,1]     [,2]     [,3]
+[1,] 1.555619 1.087681 1.079647
+[2,] 1.806849 1.632219 1.417457
+
+$ss.sub.dist
+     result.1 result.2 result.3 result.4 result.5
+[1,]      166      272      113      346      277
+[2,]      224      118      187       44      113
+
+$ss.sub.mean
+[1] 234.8 137.2
+
+$ss.t.dist
+result.1 result.2 result.3 result.4 result.5 
+     390      390      300      390      390 
+
+$ss.t.mean
+[1] 372
+
+$power.sub
+[1] 0.6 0.8
+
+$computation.time
+Time difference of 22.19219 secs
