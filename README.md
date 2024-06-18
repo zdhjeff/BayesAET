@@ -56,7 +56,7 @@ set.seed(121)
                      rar = F,
                      MID = rep(6, ns),
                      prob.MID = rep(0.6, ns),
-                     N = 5000,
+                     N.MCMC = 5000,
                      prior.cov = diag(25, 3*2), prior.mean = rep(0, 3*2)
                      )   
 
