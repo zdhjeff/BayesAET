@@ -32,7 +32,6 @@ library(BayesAET)
 #' @param prob.trtarm  the (initial) probability of a subject being assigned to a specific treatment arm. default: rep (1/nt, nt)
 #' @param upper upper probability threshold to claim superiority (in a specific subgroup); the treatment arm wins if it goes above this threshold
 #' @param lower lower probability threshold to claim superiority (in a specific subgroup); the treatment arm will be dropped if it goes below this threshold
-#' @param burnin the initial sample size of before adaptation; the default is 10 times number of treatments
 #' @param RAR whether using responsive adaptive randomization (RAR)
 #' @param MID the minimum meaningful outcome threshold for each subgroup
 #' @param prob.MID the probability threshold of being larger than the MID, treatment arms below this threshold will be dropped
