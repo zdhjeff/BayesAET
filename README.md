@@ -52,8 +52,8 @@ BAET.sim (nt=3, ns=2,
           prob.trtarm = rep (1/3, 3),
           upper = rep (0.9, 2), lower = rep (0.0, 2),
           rar = F,
-          MID = rep(6, ns),
-          prob.MID = rep(0.6, ns),
+          MID = rep(6, 2),
+          prob.MID = rep(0.6, 2),
           N.MCMC = 5000,
           prior.cov = diag(25, 3*2), prior.mean = rep(0, 3*2)
           )  
