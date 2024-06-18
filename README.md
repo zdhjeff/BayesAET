@@ -43,22 +43,22 @@ library(BayesAET)
 ## Gaussian outcome
 nt=3
 ns=2
-set.seed(121)
-            BAET.sim (nt=3, ns=2,
-                     maxN = 500,
-                     ss.interim = c(50,100,150,200,250,300,350,400,450),
-                     response.type = 'gaussian',
-                     sig.e = 10,
-                     mean.response = matrix( c(8,12,14, 6,8,10 ), nrow = nt, ncol = ns, byrow = F),  
-                     prob.subpopulation = c(0.6,0.4), # which population the patient belongs
-                     prob.trtarm = rep (1/3, 3),
-                     upper = rep (0.9, 2), lower = rep (0.0, 2),
-                     rar = F,
-                     MID = rep(6, ns),
-                     prob.MID = rep(0.6, ns),
-                     N.MCMC = 5000,
-                     prior.cov = diag(25, 3*2), prior.mean = rep(0, 3*2)
-                     )   
+BAET.sim (nt=3, ns=2,
+          maxN = 500,
+          ss.interim = c(50,100,150,200,250,300,350,400,450),
+          response.type = 'gaussian',
+          sig.e = 10,
+          mean.response = matrix( c(8,12,14, 6,8,10 ), nrow = nt, ncol = ns, byrow = F),  
+          prob.subpopulation = c(0.6,0.4), # which population the patient belongs
+          prob.trtarm = rep (1/3, 3),
+          upper = rep (0.9, 2), lower = rep (0.0, 2),
+          rar = F,
+          MID = rep(6, ns),
+          prob.MID = rep(0.6, ns),
+          N.MCMC = 5000,
+          prior.cov = diag(25, 3*2), prior.mean = rep(0, 3*2)
+          )  
+ 
 
 #' @return n.interim: number of interim looks conducted to end the whole trial
 #' @return trt_sub: simulated treatment arm allocation (1st column) and subgroup (2nd column)
