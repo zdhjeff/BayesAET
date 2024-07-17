@@ -11,6 +11,7 @@ library(reshape2)
 library(rjags)
 library(doParallel)
 library(MASS)
+library(fastDummies)
 ```
 # Example:
 
@@ -21,6 +22,7 @@ library(rjags)
 library(doParallel)
 library(MASS)
 library(BayesAET)
+library(fastDummies)
 
 #' @param nt number of treatment arms
 #' @param ns number of subgroups
