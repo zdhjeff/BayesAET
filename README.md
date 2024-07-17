@@ -32,7 +32,6 @@ library(BayesAET)
 #' @param prob.trtarm  the (initial) probability of a subject being assigned to a specific treatment arm. default: rep (1/nt, nt)
 #' @param upper upper probability threshold to claim superiority (in a specific subgroup); the treatment arm wins if it goes above this threshold
 #' @param lower lower probability threshold to claim superiority (in a specific subgroup); the treatment arm will be dropped if it goes below this threshold
-#' @param burnin the initial sample size of before adaptation; the default is 10 times number of treatments
 #' @param RAR whether using responsive adaptive randomization (RAR)
 #' @param MID the minimum meaningful outcome threshold for each subgroup
 #' @param prob.MID the probability threshold of being larger than the MID, treatment arms below this threshold will be dropped
@@ -43,22 +42,22 @@ library(BayesAET)
 ## Gaussian outcome
 nt=3
 ns=2
-set.seed(121)
-            BAET.sim (nt=3, ns=2,
-                     maxN = 500,
-                     ss.interim = c(50,100,150,200,250,300,350,400,450),
-                     response.type = 'gaussian',
-                     sig.e = 10,
-                     mean.response = matrix( c(8,12,14, 6,8,10 ), nrow = nt, ncol = ns, byrow = F),  
-                     prob.subpopulation = c(0.6,0.4), # which population the patient belongs
-                     prob.trtarm = rep (1/3, 3),
-                     upper = rep (0.9, 2), lower = rep (0.0, 2),
-                     rar = F,
-                     MID = rep(6, ns),
-                     prob.MID = rep(0.6, ns),
-                     N = 5000,
-                     prior.cov = diag(25, 3*2), prior.mean = rep(0, 3*2)
-                     )   
+BAET.sim (nt=3, ns=2,
+          maxN = 500,
+          ss.interim = c(50,100,150,200,250,300,350,400,450),
+          response.type = 'gaussian',
+          sig.e = 10,
+          mean.response = matrix( c(8,12,14, 6,8,10 ), nrow = nt, ncol = ns, byrow = F),  
+          prob.subpopulation = c(0.6,0.4), # which population the patient belongs
+          prob.trtarm = rep (1/3, 3),
+          upper = rep (0.9, 2), lower = rep (0.0, 2),
+          rar = F,
+          MID = rep(6, 2),
+          prob.MID = rep(0.6, 2),
+          N.MCMC = 5000,
+          prior.cov = diag(25, 3*2), prior.mean = rep(0, 3*2)
+          )  
+ 
 
 #' @return n.interim: number of interim looks conducted to end the whole trial
 #' @return trt_sub: simulated treatment arm allocation (1st column) and subgroup (2nd column)
@@ -136,21 +135,52 @@ $prob_superiority[[2]]
 
 
 
+### Multiple simulation example with 'Multi.BAET':
+Multi.BAET(n.sim = 5,
+           n.cores=3,
+           nt=3, ns=2,
+           ss.interim = c(100,180,300),
+           response.type = 'gaussian',
+           sig.e = 10,
+           mean.response = matrix( c(8,12,14, 5,8,11 ), nrow = nt, ncol = ns, byrow = F),  
+           prob.subpopulation = c(0.6,0.4), # which population the patient belongs
+           prob.trtarm = rep (1/nt, nt),
+           maxN = 390,
+           upper = rep (0.9, ns), lower = rep (0.0, ns),
+           rar = F,
+           MID = rep(6, ns),
+           prob.MID = rep(0.5, ns),
+           N.MCMC = 5000,
+           prior.cov = diag(25, ns*nt), prior.mean = c(8, 12, 14, 5, 8, 11) )
+          
 
-          Multi.BAET(n.sim = 10000,
-                     n.cores=48,
-                     nt=3, ns=2,
-                     ss.interim = c(100,180,300),
-                     response.type = 'gaussian',
-                     sig.e = 10,
-                     mean.response = matrix( c(8,12,14, 5,8,11 ), nrow = nt, ncol = ns, byrow = F),  
-                     prob.subpopulation = c(0.6,0.4), # which population the patient belongs
-                     prob.trtarm = rep (1/nt, nt),
-                     maxN = 390,
-                     upper = rep (0.9, ns), lower = rep (0.0, ns),
-                     rar = F,
-                     MID = rep(6, ns),
-                     prob.MID = rep(0.5, ns),
-                     N.MCMC = 5000,
-                     prior.cov = diag(25, ns*nt), prior.mean = c(8, 12, 14, 5, 8, 11) )
+$est.mean
+         [,1]     [,2]     [,3]
+[1,] 8.091625 12.59346 14.53971
+[2,] 4.523138  6.79824 11.10552
 
+$est.sd
+         [,1]     [,2]     [,3]
+[1,] 1.555619 1.087681 1.079647
+[2,] 1.806849 1.632219 1.417457
+
+$ss.sub.dist
+     result.1 result.2 result.3 result.4 result.5
+[1,]      166      272      113      346      277
+[2,]      224      118      187       44      113
+
+$ss.sub.mean
+[1] 234.8 137.2
+
+$ss.t.dist
+result.1 result.2 result.3 result.4 result.5 
+     390      390      300      390      390 
+
+$ss.t.mean
+[1] 372
+
+$power.sub
+[1] 0.6 0.8
+
+$computation.time
+Time difference of 22.19219 secs
