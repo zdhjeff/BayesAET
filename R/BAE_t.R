@@ -12,7 +12,7 @@ library(parallel)
 #' BAET simulator: this function simulates a Bayesian adaptive enrichment trial
 #' @param nt number of treatment arms
 #' @param ns number of subgroups
-#' @param nb number of subjects updated at each interim look
+#' @param ss.interim.es A list containing the g vectors, with gth vector indicating the accumulated number of sample sizes for each interim analysis for gth subpopulation
 #' @param response.type either 'binary'(probability), 'count'(lambda) or 'gaussian'
 #' @param mean.response vector of mean responses: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup
 #' @param prob.subpopulation the probability of a subject coming from one specific subpopulation. default: rep (1/ns, ns)
