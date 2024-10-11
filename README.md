@@ -44,21 +44,22 @@ library(fastDummies)
 ## Gaussian outcome
 nt=3
 ns=2
-BAET.sim (nt=3, ns=2,
-          maxN = 500,
-          ss.interim = c(50,100,150,200,250,300,350,400,450),
-          response.type = 'gaussian',
-          sig.e = 10,
-          mean.response = matrix( c(8,12,14, 6,8,10 ), nrow = nt, ncol = ns, byrow = F),  
-          prob.subpopulation = c(0.6,0.4), # which population the patient belongs
-          prob.trtarm = rep (1/3, 3),
-          upper = rep (0.9, 2), lower = rep (0.0, 2),
-          rar = F,
-          MID = rep(6, 2),
-          prob.MID = rep(0.6, 2),
-          N.MCMC = 5000,
-          prior.cov = diag(25, 3*2), prior.mean = rep(0, 3*2)
-          )  
+BAET.sim(nt, ns,
+        ss.interim.es = list(c(30, 50, 100), c(20, 60, 100)),
+        response.type = "gaussian",
+        sig.e = 10,
+        mean.response = matrix(c(seq(nt*ns) ), nrow = nt, ncol = ns, byrow = F),
+        prob.subpopulation = rep (1/ns, ns),
+        prob.trtarm = rep (1/nt, nt),
+        maxN = 100,
+        upper = rep (1, ns),
+        lower = rep (-0.1, ns),
+        rar = T,
+        MID = rep(0, ns),
+        prob.MID = rep(-0.5, ns),
+        N.MCMC = 3000,
+        prior.cov = diag(100, ns*nt),
+        prior.mean = rep(0, ns*nt))
  
 
 #' @return n.interim: number of interim looks conducted to end the whole trial
@@ -72,117 +73,133 @@ BAET.sim (nt=3, ns=2,
 
 ## outputs:
 
-[1] "subgroup 1 stopped for having identified the best treatment"
-[1] "subgroup 2 stopped for having identified the best treatment"
+$n.analysis
+[1] 4
 
-$n.interim
-[1] 5
+$trt_sub # only shows the first 5 samples
+trtarm_ind_b subpop_ind_b
+[1,]            3            1
+[2,]            2            1
+[3,]            2            2
+[4,]            2            2
+[5,]            1            1
 
-$trt_sub ## first 8 subjects
-       trtarm_ind_b subpop_ind_b
-  [1,]            3            1
-  [2,]            3            2
-  [3,]            1            1
-  [4,]            3            1
-  [5,]            3            1
-  [6,]            3            2
-  [7,]            1            1
-  [8,]            2            1
+
 
 $est
 $est[[1]]
-             trt.est  lowbound  upbound   sd.est
-coef_all[1]  9.04469  6.938137 11.12762 1.077385
-coef_all[2] 11.59883  9.273831 13.94035 1.169261
-coef_all[3] 13.59672 11.619224 15.48728 1.001275
+trt.est  lowbound  upbound   sd.est
+coef_all[1]  0.3900897 -3.880923 5.032788 2.272657
+coef_all[2] -3.3367884 -8.667656 1.680998 2.646658
+coef_all[3]  5.7576970  2.158152 9.305612 1.842488
+
 $est[[2]]
-              trt.est  lowbound   upbound   sd.est
-coef_all[4] -1.485817 -8.000615  5.235671 3.412195
-coef_all[5]  3.290585 -2.829907  9.580506 3.161698
-coef_all[6]  8.374851  4.739800 11.623587 1.772523
+trt.est  lowbound   upbound   sd.est
+coef_all[4] 3.036873 -2.679267  8.574124 2.918975
+coef_all[5] 6.009781  1.837800  9.895292 2.040647
+coef_all[6] 7.026762  2.830796 11.662915 2.244942
+
 
 $powerind
-[1] 1 1
+[1] 0 0
 
-$y ## first 8 subjects
-[1]   6.86801127  14.39916139   5.94572116   8.02465238 -15.15689113   3.42099250  -1.53051597  21.55037733
+$y # only shows the first 5 samples
+[1] 5.29427406 2.89057932 1.05350922 27.27202256 -3.81152040
 
 $N_terminate
-[1] 250
+[1] 100
+
+$ss.sub
+[,1]
+[1,]   54
+[2,]   46
 
 $prob_sup_minioutcome
 $prob_sup_minioutcome[[1]]
-          [,1]      [,2]      [,3]      [,4]      [,5]
-[1,] 0.6136667 0.9603333 0.9946667 0.9953333 0.9993333
-[2,] 0.8650000 0.9103333 0.9986667 1.0000000 1.0000000
-[3,] 0.6616667 0.9380000 1.0000000 1.0000000 1.0000000
+[,1]      [,2]      [,3]
+[1,] 0.5316667 0.5503333 0.5600000
+[2,] 0.2876667 0.1416667 0.1073333
+[3,] 0.9460000 0.9910000 1.0000000
+
 $prob_sup_minioutcome[[2]]
-           [,1]      [,2]  [,3]      [,4]      [,5]
-[1,] 0.01966667 0.0000000 0.000 0.0000000 0.0000000
-[2,] 0.24066667 0.0000000 0.000 0.0000000 0.0000000
-[3,] 0.70533333 0.9273333 0.907 0.9186667 0.9086667
+[,1]      [,2]
+[1,] 0.4433333 0.8496667
+[2,] 0.8020000 0.9976667
+[3,] 0.8333333 1.0000000
+
 
 $prob_superiority
 $prob_superiority[[1]]
-          [,1]      [,2]       [,3]        [,4]         [,5]
-[1,] 0.2363333 0.3866667 0.07633333 0.009333333 0.0006666667
-[2,] 0.5110000 0.2546667 0.19833333 0.163333333 0.0916666667
-[3,] 0.2526667 0.3586667 0.72533333 0.827333333 0.9076666667
+[,1]       [,2]        [,3]
+[1,] 0.124 0.08433333 0.031333333
+[2,] 0.066 0.01200000 0.001666667
+[3,] 0.810 0.90366667 0.967000000
+
 $prob_superiority[[2]]
-           [,1] [,2] [,3] [,4] [,5]
-[1,] 0.01966667    0    0    0    0
-[2,] 0.17233333    0    0    0    0
-[3,] 0.80800000    1    1    1    1
+[,1]       [,2]
+[1,] 0.1080000 0.08566667
+[2,] 0.4353333 0.33966667
+[3,] 0.4566667 0.57466667
+
 
 
 
 
 ### Multiple simulation example with 'Multi.BAET':
+nt =3
+ns=2
+prior.cov = diag(25, ns*nt)
+registerDoParallel(cores=3)
+
 Multi.BAET(n.sim = 5,
            n.cores=3,
            nt=3, ns=2,
-           ss.interim = c(100,180,300),
-           response.type = 'gaussian',
+           ss.interim.es = list(c(30, 50, 100), c(20, 60, 100)),
+           response.type = "gaussian",
            sig.e = 10,
-           mean.response = matrix( c(8,12,14, 5,8,11 ), nrow = nt, ncol = ns, byrow = F),  
-           prob.subpopulation = c(0.6,0.4), # which population the patient belongs
+           mean.response = matrix(c(seq(nt*ns)),nrow = nt, ncol = ns, byrow =F),
+           prob.subpopulation = rep (1/ns, ns),
            prob.trtarm = rep (1/nt, nt),
-           maxN = 390,
-           upper = rep (0.9, ns), lower = rep (0.0, ns),
+           maxN = 100,
+           upper = rep (1, ns),
+           lower = rep (0, ns),
            rar = F,
-           MID = rep(6, ns),
-           prob.MID = rep(0.5, ns),
-           N.MCMC = 5000,
-           prior.cov = diag(25, ns*nt), prior.mean = c(8, 12, 14, 5, 8, 11) )
+           MID = rep(0, ns),
+           prob.MID = rep(-0.5, ns),
+           N.MCMC = 3000,
+           prior.cov = diag(100, ns*nt),
+           prior.mean = rep(0, ns*nt))
+
           
 
 $est.mean
-         [,1]     [,2]     [,3]
-[1,] 8.091625 12.59346 14.53971
-[2,] 4.523138  6.79824 11.10552
+[,1]     [,2]     [,3]
+[1,] 1.024811 3.225373 4.336103
+[2,] 6.024678 3.610556 5.532540
 
 $est.sd
-         [,1]     [,2]     [,3]
-[1,] 1.555619 1.087681 1.079647
-[2,] 1.806849 1.632219 1.417457
+[,1]     [,2]     [,3]
+[1,] 2.302154 2.156442 2.380633
+[2,] 2.255920 2.480447 2.501716
 
 $ss.sub.dist
-     result.1 result.2 result.3 result.4 result.5
-[1,]      166      272      113      346      277
-[2,]      224      118      187       44      113
+result.1 result.2 result.3 result.4 result.5
+[1,]       52       53       51       52       55
+[2,]       48       47       49       48       45
 
 $ss.sub.mean
-[1] 234.8 137.2
+[1] 52.6 47.4
 
 $ss.t.dist
-result.1 result.2 result.3 result.4 result.5 
-     390      390      300      390      390 
+result.1 result.2 result.3 result.4 result.5
+100      100      100      100      100
 
 $ss.t.mean
-[1] 372
+[1] 100
 
 $power.sub
-[1] 0.6 0.8
+[1] 0 0
 
 $computation.time
-Time difference of 22.19219 secs
+Time difference of 9.60321 secs
+
