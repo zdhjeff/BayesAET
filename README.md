@@ -27,7 +27,7 @@ library(fastDummies)
 #' @param nt number of treatment arms
 #' @param ns number of subgroups
 #' @param maxN the maximum sample size, trial will stop when achieving this number
-#' @param nb number of subjects updated at each interim look
+#' @param ss.interim.es A list containing the g vectors, with gth vector indicating the accumulated number of sample sizes for each interim analysis for gth subpopulation
 #' @param response.type either 'binary'(probability), 'count'(lambda) or 'gaussian'
 #' @param mean.response matrix of total effect sizes: a nt (row) * ns (col) matrix, with row number indicating treatment and col number indicating subgroup
 #' @param prob.subpopulation the probability of a subject coming from one specific subpopulation. default: rep (1/ns, ns)
