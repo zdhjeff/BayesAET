@@ -486,8 +486,8 @@ BAET.sim = function(nt, ns,
     ss.sub=counts,
     prob_sup_minioutcome=prob_sup_minioutcome,
     #treat_result_record=treat_result_record,
-    prob_superiority=prob_superiority,
-    sg= sg
+    prob_superiority=prob_superiority
+    #sg= sg
 
   )
 
