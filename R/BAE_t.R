@@ -28,7 +28,7 @@ library(parallel)
 #' @param prior.mean the prior mean for a multivariate normal prior
 
 BAET.sim = function(nt, ns,
-                    ss.interim.es = list(v1, v2),
+                    ss.interim.es,
                     response.type = "gaussian",
                     sig.e = 10,
                     mean.response = matrix(c(seq(nt*ns) ), nrow = nt, ncol = ns, byrow = F),  ## input nt treatments for one subpopulation, then nt treatments for the second population
