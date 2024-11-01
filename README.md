@@ -55,8 +55,6 @@ BAET.sim(nt, ns,
         upper = rep (1, ns),
         lower = rep (-0.1, ns),
         rar = T,
-        MOR = rep(0, ns),
-        prob.MOR = rep(-0.5, ns),
         N.MCMC = 3000,
         prior.cov = diag(100, ns*nt),
         prior.mean = rep(0, ns*nt))
