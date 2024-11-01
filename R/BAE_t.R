@@ -21,8 +21,8 @@ library(parallel)
 #' @param upper upper probability threshold to claim superiority (in a specific subgroup); the treatment arm wins if it goes above this threshold
 #' @param lower lower probability threshold to claim superiority (in a specific subgroup); the treatment arm will be dropped if it goes below this threshold
 #' @param rar whether using responsive adaptive randomization (rar)
-#' @param MID the minimum meaningful outcome threshold for each subgroup
-#' @param prob.MID the probability threshold of being larger than the MID, treatment arms below this threshold will be dropped
+#' @param MOR the minimum meaningful outcome threshold for each subgroup
+#' @param prob.MOR the probability threshold of being larger than the MOR, treatment arms below this threshold will be dropped
 #' @param N.MCMC Number of MCMC samples
 #' @param prior.cov the prior covariance for a multivariate normal prior
 #' @param prior.mean the prior mean for a multivariate normal prior
@@ -35,11 +35,11 @@ BAET.sim = function(nt, ns,
                     prob.subpopulation = rep (1/ns, ns),
                     prob.trtarm = rep (1/nt, nt),
                     maxN = 300,
-                    upper = rep (0.975, ns),
-                    lower = rep (0.1, ns),
+                    upper = rep (0.90, ns),
+                    lower = rep (0.10, ns),
                     rar = F,
-                    MID = rep(0, ns),
-                    prob.MID = rep(0.5, ns),
+                    MOR = rep(-Inf, ns),
+                    prob.MOR = rep(0.10, ns),
                     N.MCMC = 3000,
                     prior.cov = diag(100, ns*nt),
                     prior.mean = rep(0, ns*nt) ## notice for binary/count outcome,the prior is on log-odds/log-rate, ie, prior is put one the coef of the model
@@ -347,8 +347,8 @@ BAET.sim = function(nt, ns,
         prob_superiority[[i]] = abind(prob_superiority[[i]], apply(check[[i]], 2, mean), along = 2)
 
         treat_prob[[i]][which(treat_result[[i]]==0)]=0 ## once the subgroup failed in mini check, it is zero
-        treat_prob[[i]][which(treat_result[[i]]==1)]= as.vector( (apply((thetaall_new_split[[i]][,which(treat_result[[i]]==1),drop=F]-MID[i] >=0 ),2,sum))/N.MCMC ) ## minioutcome_1 is the minimum outcome needed, treatp is the probablity of larger than minioutcome_1
-        treat_result[[i]]=as.numeric(treat_prob[[i]]>= prob.MID[i] ) ## whether that the treatment arm is larger than the threshold
+        treat_prob[[i]][which(treat_result[[i]]==1)]= as.vector( (apply((thetaall_new_split[[i]][,which(treat_result[[i]]==1),drop=F]-MOR[i] >=0 ),2,sum))/N.MCMC ) ## minioutcome_1 is the minimum outcome needed, treatp is the probablity of larger than minioutcome_1
+        treat_result[[i]]=as.numeric(treat_prob[[i]]>= prob.MOR[i] ) ## whether that the treatment arm is larger than the threshold
         prob_assign[[i]][which(treat_result[[i]]==0)]=0 # this means once the trt fails in mini check, that trt stops receiving subjects
 
         prob_sup_minioutcome[[i]]=abind(prob_sup_minioutcome[[i]],treat_prob[[i]],along = 2) ## this is only to record treat_prob[[i]]
@@ -401,8 +401,8 @@ BAET.sim = function(nt, ns,
       prob_superiority[[i]] = abind(prob_superiority[[i]], apply(check[[i]], 2, mean), along = 2)
 
       treat_prob[[i]][which(treat_result[[i]]==0)]=0 ## once the subgroup failed in mini check, it is zero
-      treat_prob[[i]][which(treat_result[[i]]==1)]= as.vector( (apply((thetaall_new_split[[i]][,which(treat_result[[i]]==1),drop=F]-MID[i] >=0 ),2,sum))/N.MCMC ) ## minioutcome_1 is the minimum outcome needed, treatp is the probablity of larger than minioutcome_1
-      treat_result[[i]]=as.numeric(treat_prob[[i]]>= prob.MID[i] ) ## whether that the treatment arm is larger than the threshold
+      treat_prob[[i]][which(treat_result[[i]]==1)]= as.vector( (apply((thetaall_new_split[[i]][,which(treat_result[[i]]==1),drop=F]-MOR[i] >=0 ),2,sum))/N.MCMC ) ## minioutcome_1 is the minimum outcome needed, treatp is the probablity of larger than minioutcome_1
+      treat_result[[i]]=as.numeric(treat_prob[[i]]>= prob.MOR[i] ) ## whether that the treatment arm is larger than the threshold
       prob_assign[[i]][which(treat_result[[i]]==0)]=0 # this means once the trt fails in mini check, that trt stops receiving subjects
 
       prob_sup_minioutcome[[i]]=abind(prob_sup_minioutcome[[i]],treat_prob[[i]],along = 2) ## this is only to record treat_prob[[i]]
@@ -478,11 +478,12 @@ BAET.sim = function(nt, ns,
 
   out = list(
     n.analysis =j,
+    interim.sub = sg,
     trt_sub =trt_sub,
     est =est,
     powerind = powerind,
     y =y,
-    N_terminate = length(y),
+    n_terminate = length(y),
     ss.sub=counts,
     prob_sup_minioutcome=prob_sup_minioutcome,
     #treat_result_record=treat_result_record,
@@ -500,8 +501,8 @@ BAET.sim = function(nt, ns,
 #' @return est: treatment effect estimation(posterior mean) and the 95% Credible interval bounds for each treatment arm in each subgroup
 #' @return powerind: power indicator of whether the best treatment arms is correctly selected in each subgroup
 #' @return y: simlulated outcome
-#' @return N_terminate: the total sample size consumed when trial ends
-#' @return prob_sup_minioutcome: the probability of a treatment large than the MID
+#' @return n_terminate: the total sample size consumed when trial ends
+#' @return prob_sup_minioutcome: the probability of a treatment large than the MOR
 #' @return prob_superiority: the probability of a treatment being the best among each subgroup
 
 
@@ -520,10 +521,10 @@ Multi.BAET= function(n.sim,
                      prob.subpopulation = c(0.6,0.4), # which population the patient belongs
                      prob.trtarm = rep (1/nt, nt),
                      maxN = 300,
-                     upper = rep (0.9, ns), lower = rep (0.0, ns),
-                     rar = T,
-                     MID = rep(6, ns),
-                     prob.MID = rep(0.5, ns),
+                     upper = rep (0.90, ns), lower = rep (0.10, ns),
+                     rar = F,
+                     MOR = rep(-Inf, ns),
+                     prob.MOR = rep(0.10, ns),
                      N.MCMC = 5000,
                      prior.cov = diag(25, ns*nt), prior.mean = c(8, 12, 14, 5, 8, 11) ){
 
@@ -541,14 +542,13 @@ Multi.BAET= function(n.sim,
                     maxN = maxN,
                     upper =  upper, lower = lower,
                     rar = rar,
-                    MID = MID,
-                    prob.MID = prob.MID,
+                    MOR = MOR,
+                    prob.MOR = prob.MOR,
                     N.MCMC = N.MCMC,
                     prior.cov = prior.cov, prior.mean = prior.mean
     )
 
 
-    nint=test$n.interim
     est = matrix(rep(0, nt*ns), nrow =ns, ncol = nt)
     for (i in 1:ns){
       est[i,] = unlist(test$est[[i]])[1:nt]
@@ -563,10 +563,10 @@ Multi.BAET= function(n.sim,
     for (i in 1:ns) {
       ss.sub[i] =sum (test$trt_sub[,2] == i)
     }
-    N_terminate = test$N_terminate
+    n_terminate = test$n_terminate
     power = test$powerind
 
-    out= list(est, sd, ss.sub, as.vector (N_terminate), as.vector(power) )
+    out= list(est, sd, ss.sub, as.vector (n_terminate), as.vector(power) )
     class(out) = 'trial'
     return(out)
   }
