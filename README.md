@@ -35,8 +35,8 @@ library(fastDummies)
 #' @param upper upper probability threshold to claim superiority (in a specific subgroup); the treatment arm wins if it goes above this threshold
 #' @param lower lower probability threshold to claim superiority (in a specific subgroup); the treatment arm will be dropped if it goes below this threshold
 #' @param RAR whether using responsive adaptive randomization (RAR)
-#' @param MID the minimum meaningful outcome threshold for each subgroup
-#' @param prob.MID the probability threshold of being larger than the MID, treatment arms below this threshold will be dropped
+#' @param MOR the minimum meaningful outcome threshold for each subgroup
+#' @param prob.MOR the probability threshold of being larger than the MOR, treatment arms below this threshold will be dropped
 #' @param N Number of MCMC samples
 #' @param prior.cov the prior covariance for a multivariate normal prior
 #' @param prior.mean the prior mean for a multivariate normal prior
@@ -55,8 +55,8 @@ BAET.sim(nt, ns,
         upper = rep (1, ns),
         lower = rep (-0.1, ns),
         rar = T,
-        MID = rep(0, ns),
-        prob.MID = rep(-0.5, ns),
+        MOR = rep(0, ns),
+        prob.MOR = rep(-0.5, ns),
         N.MCMC = 3000,
         prior.cov = diag(100, ns*nt),
         prior.mean = rep(0, ns*nt))
@@ -164,8 +164,8 @@ Multi.BAET(n.sim = 5,
            upper = rep (1, ns),
            lower = rep (0, ns),
            rar = F,
-           MID = rep(0, ns),
-           prob.MID = rep(-0.5, ns),
+           MOR = rep(0, ns),
+           prob.MOR = rep(-0.5, ns),
            N.MCMC = 3000,
            prior.cov = diag(100, ns*nt),
            prior.mean = rep(0, ns*nt))
