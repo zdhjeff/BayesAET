@@ -556,7 +556,7 @@ Multi.BAET= function(n.sim,
 
     sd = matrix(rep(0, nt*ns), nrow =ns, ncol = nt)
     for (i in 1:ns){
-      sd[i,] = unlist(test$est[[i]])[(3*nt+1):(3*nt+3)]
+      sd[i,] = unlist(test$est[[i]])[(3*nt+1):(3*nt+nt)]
     }
 
     ss.sub = c()
