@@ -3,8 +3,6 @@ An R package for Bayesian adaptive enrichment trials with multiple treatment arm
 Run the following command to install the package and other packages:
 
 ```r
-library(devtools)
-install_github("zdhjeff/BayesAET")
 #install the following packages if needed
 library(abind)
 library(reshape2)
@@ -13,6 +11,9 @@ library(doParallel)
 library(MASS)
 library(matlib)
 library(fastDummies)
+library(devtools)
+install_github("zdhjeff/BayesAET")
+
 ```
 # Example:
 
@@ -23,8 +24,8 @@ library(reshape2)
 library(rjags)
 library(doParallel)
 library(MASS)
-library(BayesAET)
 library(fastDummies)
+library(BayesAET)
 
 #' @param nt number of treatment arms
 #' @param ns number of subgroups
