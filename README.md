@@ -11,12 +11,14 @@ library(reshape2)
 library(rjags)
 library(doParallel)
 library(MASS)
+library(matlib)
 library(fastDummies)
 ```
 # Example:
 
 ```r
 library(abind)
+library(matlib)
 library(reshape2)
 library(rjags)
 library(doParallel)
