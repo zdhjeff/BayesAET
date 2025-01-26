@@ -12,6 +12,7 @@ library(MASS)
 library(matlib)
 library(fastDummies)
 library(devtools)
+
 install_github("zdhjeff/BayesAET")
 
 ```
