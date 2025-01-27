@@ -4,6 +4,7 @@ Run the following command to install the package and other packages:
 
 ```r
 #install the following packages if needed
+
 library(abind)
 library(reshape2)
 library(rjags)
