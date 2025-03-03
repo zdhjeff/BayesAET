@@ -21,6 +21,8 @@ library(parallel)
 #' @param upper upper probability threshold to claim superiority (in a specific subgroup); the treatment arm wins if it goes above this threshold
 #' @param lower lower probability threshold to claim superiority (in a specific subgroup); the treatment arm will be dropped if it goes below this threshold
 #' @param rar whether using responsive adaptive randomization (rar)
+#' @param rarmin.p the minimum randomization probability under rar  default:0.1
+#' @param rarmax.p the maximum randomization probability under rar  default:0.9
 #' @param MOR the minimum meaningful outcome threshold for each subgroup
 #' @param prob.MOR the probability threshold of being larger than the MOR, treatment arms below this threshold will be dropped
 #' @param N.MCMC Number of MCMC samples
@@ -38,6 +40,8 @@ BAET.sim = function(nt, ns,
                     upper = rep (0.90, ns),
                     lower = rep (0.10, ns),
                     rar = F,
+                    rarmin.p = 0.1, 
+                    rarmax.p = 0.9,
                     MOR = rep(-Inf, ns),
                     prob.MOR = rep(0.10, ns),
                     N.MCMC = 3000,
@@ -56,7 +60,29 @@ BAET.sim = function(nt, ns,
     for (i in 1:n) check[i] = (x[i] == max(x))
     return(check)
   }
-
+  
+  #function to adjust probabilities with user-specified thresholds
+  adjust_prob <- function(prob, rarmin.p = rarmin.p, rarmax.p = rarmax.p) {
+    # Step 1: Normalize the probability vector
+    prob <- prob / sum(prob)
+    # Step 2: Identify values that exceed limits
+    over_max <- prob > rarmax.p
+    under_min <- (prob < rarmin.p & prob >0)
+    # Step 3: Fix probabilities that exceed limits
+    prob[over_max] <- rarmax.p
+    prob[under_min] <- rarmin.p
+    # Step 4: Redistribute remaining probability to maintain sum = 1
+    remaining_prob <- 1 - sum(prob)  # The total amount we need to redistribute
+    free_indices <- !(over_max | under_min)  # Indices that can be adjusted
+    if (sum(free_indices) > 0) {
+      # Redistribute remaining probability proportionally
+      prob[free_indices] <- prob[free_indices] + remaining_prob * (prob[free_indices] / sum(prob[free_indices]))
+    } else {
+      # If no free elements, force sum to 1 by slightly adjusting max values
+      prob[over_max] <- prob[over_max] + (remaining_prob / sum(over_max))
+    }
+    return(prob)
+  }
 
   y = NULL # outcome
   x_trtarm = NULL
@@ -360,6 +386,9 @@ BAET.sim = function(nt, ns,
           if (rar == T  & ntj[[i]]>1)  {
             prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1)] =
               ((ntj[i] - 1)/ntj[i])*sqrt(prob_superiority[[i]][which(apply(check[[i]], 2, mean)>lower[i]& treat_result[[i]]==1),threshold_indices[i]])
+           # adjust the probability to make sure the probs are within a specified range
+            prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1)] = adjust_prob(c(prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1)]))
+          
           } else prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i]& treat_result[[i]]==1)] = 1/ntj[i]
 
         }
@@ -523,6 +552,8 @@ Multi.BAET= function(n.sim,
                      maxN = 300,
                      upper = rep (0.90, ns), lower = rep (0.10, ns),
                      rar = F,
+                     rarmin.p = 0.1, 
+                     rarmax.p = 0.9,
                      MOR = rep(-Inf, ns),
                      prob.MOR = rep(0.10, ns),
                      N.MCMC = 5000,
