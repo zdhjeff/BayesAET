@@ -623,7 +623,7 @@ Multi.BAET= function(n.sim,
   matrix_list <- mt1[3,]  # Replace with actual matrices
 
   # Compute the element-wise average
-  average_matrix <- Reduce(`+`, matrix_list) / length(matrix_list)
+  ss.sub.trt.mean <- Reduce(`+`, matrix_list) / length(matrix_list)
 
 
 
@@ -643,7 +643,7 @@ Multi.BAET= function(n.sim,
 
   computation.time = Sys.time()-start
   out = list ( est.mean = est, est.sd =sd,
-               average_matrix = average_matrix,
+               ss.sub.trt.mean = ss.sub.trt.mean,
                ss.sub.dist = ss.sub.dist,
                ss.sub.mean=ss.sub.mean,
                ss.t.dist = ss.t.dist,
