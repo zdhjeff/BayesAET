@@ -385,7 +385,7 @@ BAET.sim = function(nt, ns,
             prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1)] =
               ((ntj[i] - 1)/ntj[i])*sqrt(prob_superiority[[i]][which(apply(check[[i]], 2, mean)>lower[i]& treat_result[[i]]==1),threshold_indices[i]])
            # adjust the probability to make sure the probs are within a specified range
-             prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1 & !0)] = adjust_prob(c(prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1)]),rarmin.p = rarmin.p, rarmax.p = rarmax.p )
+             #prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1 & !0)] = adjust_prob(c(prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1)]),rarmin.p = rarmin.p, rarmax.p = rarmax.p )
           } else prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i]& treat_result[[i]]==1)] = 1/ntj[i]
 
         }
@@ -441,7 +441,7 @@ BAET.sim = function(nt, ns,
           prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1)] =
             ((ntj[i] - 1)/ntj[i])*sqrt(prob_superiority[[i]][which(apply(check[[i]], 2, mean)>lower[i]& treat_result[[i]]==1),threshold_indices[i]])
           
-          prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1 & !0)] = adjust_prob(c(prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1)]),rarmin.p = rarmin.p, rarmax.p = rarmax.p )
+          #prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1 & !0)] = adjust_prob(c(prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1)]),rarmin.p = rarmin.p, rarmax.p = rarmax.p )
         } else prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i]& treat_result[[i]]==1)] = 1/ntj[i]
 
       }
