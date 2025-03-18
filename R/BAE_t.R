@@ -596,7 +596,8 @@ Multi.BAET= function(n.sim,
     for (i in 1:ns){
       sd[i,] = unlist(test$est[[i]])[(3*nt+1):(3*nt+nt)]
     }
-
+    
+    summmat = matrix(rep(0, nt*ns), nrow =ns, ncol = nt)    
     summmat = test$summary_matrix
 
     ss.sub = c()
@@ -606,7 +607,7 @@ Multi.BAET= function(n.sim,
     n_terminate = test$n_terminate
     power = test$powerind
 
-    out= list(est, sd, ss.sub, as.vector (n_terminate), as.vector(power) )
+    out= list(est, sd, summary_matrix, ss.sub, as.vector (n_terminate), as.vector(power) )
     class(out) = 'trial'
     return(out)
   }
