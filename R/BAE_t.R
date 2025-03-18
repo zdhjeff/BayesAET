@@ -596,6 +596,8 @@ Multi.BAET= function(n.sim,
       sd[i,] = unlist(test$est[[i]])[(3*nt+1):(3*nt+nt)]
     }
 
+    summmat = test$summary_matrix
+
     ss.sub = c()
     for (i in 1:ns) {
       ss.sub[i] =sum (test$trt_sub[,2] == i)
@@ -628,11 +630,12 @@ Multi.BAET= function(n.sim,
 
   computation.time = Sys.time()-start
   out = list ( est.mean = est, est.sd =sd,
+               summmat = summmat,
                ss.sub.dist = ss.sub.dist,
                ss.sub.mean=ss.sub.mean,
                ss.t.dist = ss.t.dist,
                ss.t.mean =ss.t.mean,
-               power.sub = power.sub ,
+               power.sub = power.sub,
                computation.time = computation.time)
 
   return(out)
