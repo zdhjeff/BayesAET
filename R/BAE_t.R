@@ -505,6 +505,11 @@ BAET.sim = function(nt, ns,
     treat_result_record[[i]] =treat_result_record[[i]][,-1]
     prob_superiority[[i]] = prob_superiority[[i]][,-1]
   }
+  # Create a summary table for trt_sub
+    summary_matrix <- table(trt_sub[, "subpop_ind_b"], trt_sub[, "trtarm_ind_b"])
+    summary_matrix <- as.matrix(summary_matrix)
+    rownames(summary_matrix) <- paste0("S_", rownames(summary_matrix))
+    colnames(summary_matrix) <- paste0("T_", colnames(summary_matrix))                    
 
   out = list(
     n.analysis =j,
