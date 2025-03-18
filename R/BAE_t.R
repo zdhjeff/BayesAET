@@ -514,6 +514,7 @@ BAET.sim = function(nt, ns,
   out = list(
     n.analysis =j,
     interim.sub = sg,
+    summary_matrix =summary_matrix,
     trt_sub =trt_sub,
     est =est,
     powerind = powerind,
