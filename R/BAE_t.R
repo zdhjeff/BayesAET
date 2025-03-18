@@ -506,15 +506,15 @@ BAET.sim = function(nt, ns,
     prob_superiority[[i]] = prob_superiority[[i]][,-1]
   }
   # Create a summary table for trt_sub
-    summary_matrix <- table(trt_sub[, "subpop_ind_b"], trt_sub[, "trtarm_ind_b"])
-    summary_matrix <- as.matrix(summary_matrix)
-    rownames(summary_matrix) <- paste0("S_", rownames(summary_matrix))
-    colnames(summary_matrix) <- paste0("T_", colnames(summary_matrix))                    
+    ss.sub.trt <- table(trt_sub[, "subpop_ind_b"], trt_sub[, "trtarm_ind_b"])
+    ss.sub.trt <- as.matrix(ss.sub.trt)
+    rownames(ss.sub.trt) <- paste0("S_", rownames(ss.sub.trt))
+    colnames(ss.sub.trt) <- paste0("T_", colnames(ss.sub.trt))                    
 
   out = list(
     n.analysis =j,
     interim.sub = sg,
-    summary_matrix =summary_matrix,
+    ss.sub.trt =ss.sub.trt,
     trt_sub =trt_sub,
     est =est,
     powerind = powerind,
@@ -598,7 +598,7 @@ Multi.BAET= function(n.sim,
     }
     
     summmat = matrix(rep(0, nt*ns), nrow =ns, ncol = nt)    
-    summmat = test$summary_matrix
+    summmat = test$ss.sub.trt
 
     ss.sub = c()
     for (i in 1:ns) {
