@@ -102,8 +102,6 @@ BAET.sim = function(nt, ns,
   current_thresholds <- sapply(threshold_list, function(v) v[1])
   # Storage for generated data
   generated_data <- NULL
-  # Set a maximum sample size
-  n_max <- 400
   total_samples <- 0  # Counter for total samples generated
 
 
