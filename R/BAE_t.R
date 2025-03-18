@@ -607,7 +607,7 @@ Multi.BAET= function(n.sim,
     n_terminate = test$n_terminate
     power = test$powerind
 
-    out= list(est, sd, summary_matrix, ss.sub, as.vector (n_terminate), as.vector(power) )
+    out= list(est, sd, summmat, ss.sub, as.vector (n_terminate), as.vector(power) )
     class(out) = 'trial'
     return(out)
   }
@@ -618,21 +618,32 @@ Multi.BAET= function(n.sim,
   # treament sd
   stacked_matrices_sd <- abind(mt1[2,], along = 3)
   sd = apply(stacked_matrices_sd, c(1, 2), mean)
+  
+  # numbers summary matrix
+  matrix_list <- list(mt1[3,])  # Replace with actual matrices
+
+  # Compute the element-wise average
+  average_matrix <- Reduce(`+`, matrix_list) / length(matrix_list)
+
+
+
+
+  
   # ss.sub
-  ss.sub.dist = abind(mt1[3,], along = 2)
+  ss.sub.dist = abind(mt1[4,], along = 2)
   ss.sub.mean= apply (ss.sub.dist,1,mean)
   # total.ss
-  ss.t.dist = abind(mt1[4,],along = 1)
+  ss.t.dist = abind(mt1[5,],along = 1)
   ss.t.mean = mean(ss.t.dist)
   # power
-  power.sub.dist = abind(mt1[5,], along = 2)
+  power.sub.dist = abind(mt1[6,], along = 2)
   power.sub= apply (power.sub.dist,1,mean)
 
   Sys.time()-start
 
   computation.time = Sys.time()-start
   out = list ( est.mean = est, est.sd =sd,
-               summmat = summmat,
+               average_matrix = average_matrix,
                ss.sub.dist = ss.sub.dist,
                ss.sub.mean=ss.sub.mean,
                ss.t.dist = ss.t.dist,
