@@ -620,7 +620,7 @@ Multi.BAET= function(n.sim,
   sd = apply(stacked_matrices_sd, c(1, 2), mean)
   
   # numbers summary matrix
-  matrix_list <- list(mt1[3,])  # Replace with actual matrices
+  matrix_list <- mt1[3,]  # Replace with actual matrices
 
   # Compute the element-wise average
   average_matrix <- Reduce(`+`, matrix_list) / length(matrix_list)
