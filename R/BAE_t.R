@@ -8,7 +8,38 @@ library(roxygen2)
 library(fastDummies)
 library(parallel)
 
+# Help function to adjust probability under rar:
 
+adjust_prob <- function(prob, rarmin.p, rarmax.p) {
+  # Step 1: Handle special cases
+  if (any(is.na(prob))) stop("Input probability vector contains NA values")
+  #if (sum(prob) == 0) return(rep(1 / length(prob), length(prob)))  # Assign equal probabilities
+  
+  # Step 2: Normalize the probability vector
+  prob <- prob / sum(prob)
+  
+  # Step 3: Identify values that exceed limits
+  over_max <- prob > rarmax.p
+  under_min <- (prob < rarmin.p & prob > 0)
+  
+  # Step 4: Fix probabilities that exceed limits
+  prob[over_max] <- rarmax.p
+  prob[under_min] <- rarmin.p
+  
+  # Step 5: Redistribute remaining probability to maintain sum = 1
+  remaining_prob <- 1 - sum(prob)  # The total amount we need to redistribute
+  free_indices <- !(over_max | under_min)  # Indices that can be adjusted
+  
+  if (sum(free_indices) > 0 && sum(prob[free_indices]) > 0) {
+    # Redistribute remaining probability proportionally
+    prob[free_indices] <- prob[free_indices] + remaining_prob * (prob[free_indices] / sum(prob[free_indices]))
+  } else if (sum(over_max) > 0) {
+    # If no free elements, force sum to 1 by slightly adjusting max values
+    prob[over_max] <- prob[over_max] + (remaining_prob / sum(over_max))
+  }
+  
+  return(prob)
+}
 #' BAET simulator: this function simulates a Bayesian adaptive enrichment trial
 #' @param nt number of treatment arms
 #' @param ns number of subgroups
@@ -61,28 +92,6 @@ BAET.sim = function(nt, ns,
     return(check)
   }
   
-  #function to adjust probabilities with user-specified thresholds
-  adjust_prob <- function(prob, rarmin.p = rarmin.p, rarmax.p = rarmax.p) {
-    # Step 1: Normalize the probability vector
-    prob <- prob / sum(prob)
-    # Step 2: Identify values that exceed limits
-    over_max <- prob > rarmax.p
-    under_min <- (prob < rarmin.p & prob >0)
-    # Step 3: Fix probabilities that exceed limits
-    prob[over_max] <- rarmax.p
-    prob[under_min] <- rarmin.p
-    # Step 4: Redistribute remaining probability to maintain sum = 1
-    remaining_prob <- 1 - sum(prob)  # The total amount we need to redistribute
-    free_indices <- !(over_max | under_min)  # Indices that can be adjusted
-    if (sum(free_indices) > 0) {
-      # Redistribute remaining probability proportionally
-      prob[free_indices] <- prob[free_indices] + remaining_prob * (prob[free_indices] / sum(prob[free_indices]))
-    } else {
-      # If no free elements, force sum to 1 by slightly adjusting max values
-      prob[over_max] <- prob[over_max] + (remaining_prob / sum(over_max))
-    }
-    return(prob)
-  }
 
   y = NULL # outcome
   x_trtarm = NULL
@@ -385,7 +394,7 @@ BAET.sim = function(nt, ns,
             prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1)] =
               ((ntj[i] - 1)/ntj[i])*sqrt(prob_superiority[[i]][which(apply(check[[i]], 2, mean)>lower[i]& treat_result[[i]]==1),threshold_indices[i]])
            # adjust the probability to make sure the probs are within a specified range
-             #prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1 & !0)] = adjust_prob(c(prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1)]),rarmin.p = rarmin.p, rarmax.p = rarmax.p )
+             prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1 & !0)] = adjust_prob(c(prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1)]),rarmin.p = rarmin.p, rarmax.p = rarmax.p )
           } else prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i]& treat_result[[i]]==1)] = 1/ntj[i]
 
         }
@@ -440,8 +449,8 @@ BAET.sim = function(nt, ns,
         if (rar == T  & ntj[[i]]>1)  {
           prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1)] =
             ((ntj[i] - 1)/ntj[i])*sqrt(prob_superiority[[i]][which(apply(check[[i]], 2, mean)>lower[i]& treat_result[[i]]==1),threshold_indices[i]])
-          
-          #prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1 & !0)] = adjust_prob(c(prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1)]),rarmin.p = rarmin.p, rarmax.p = rarmax.p )
+          # adjust the probability to make sure the probs are within a specified range
+          prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1 & !0)] = adjust_prob(c(prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i] & treat_result[[i]]==1)]),rarmin.p = rarmin.p, rarmax.p = rarmax.p )
         } else prob_assign[[i]][which( apply(check[[i]], 2, mean)>lower[i]& treat_result[[i]]==1)] = 1/ntj[i]
 
       }
