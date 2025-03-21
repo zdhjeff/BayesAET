@@ -8,28 +8,28 @@ library(roxygen2)
 library(fastDummies)
 library(parallel)
 
-# Help function to adjust probability under rar:
+# Helper function to adjust probability under rar:
 
 adjust_prob <- function(prob, rarmin.p, rarmax.p) {
   # Step 1: Handle special cases
   if (any(is.na(prob))) stop("Input probability vector contains NA values")
   #if (sum(prob) == 0) return(rep(1 / length(prob), length(prob)))  # Assign equal probabilities
-  
+
   # Step 2: Normalize the probability vector
   prob <- prob / sum(prob)
-  
+
   # Step 3: Identify values that exceed limits
   over_max <- prob > rarmax.p
   under_min <- (prob < rarmin.p & prob > 0)
-  
+
   # Step 4: Fix probabilities that exceed limits
   prob[over_max] <- rarmax.p
   prob[under_min] <- rarmin.p
-  
+
   # Step 5: Redistribute remaining probability to maintain sum = 1
   remaining_prob <- 1 - sum(prob)  # The total amount we need to redistribute
   free_indices <- !(over_max | under_min)  # Indices that can be adjusted
-  
+
   if (sum(free_indices) > 0 && sum(prob[free_indices]) > 0) {
     # Redistribute remaining probability proportionally
     prob[free_indices] <- prob[free_indices] + remaining_prob * (prob[free_indices] / sum(prob[free_indices]))
@@ -37,7 +37,7 @@ adjust_prob <- function(prob, rarmin.p, rarmax.p) {
     # If no free elements, force sum to 1 by slightly adjusting max values
     prob[over_max] <- prob[over_max] + (remaining_prob / sum(over_max))
   }
-  
+
   return(prob)
 }
 #' BAET simulator: this function simulates a Bayesian adaptive enrichment trial
@@ -71,7 +71,7 @@ BAET.sim = function(nt, ns,
                     upper = rep (0.90, ns),
                     lower = rep (0.10, ns),
                     rar = F,
-                    rarmin.p = 0.1, 
+                    rarmin.p = 0.1,
                     rarmax.p = 0.9,
                     MOR = rep(-Inf, ns),
                     prob.MOR = rep(0.10, ns),
@@ -91,7 +91,7 @@ BAET.sim = function(nt, ns,
     for (i in 1:n) check[i] = (x[i] == max(x))
     return(check)
   }
-  
+
 
   y = NULL # outcome
   x_trtarm = NULL
@@ -516,7 +516,7 @@ BAET.sim = function(nt, ns,
     ss.sub.trt <- table(trt_sub[, "subpop_ind_b"], trt_sub[, "trtarm_ind_b"])
     ss.sub.trt <- as.matrix(ss.sub.trt)
     rownames(ss.sub.trt) <- paste0("S_", rownames(ss.sub.trt))
-    colnames(ss.sub.trt) <- paste0("T_", colnames(ss.sub.trt))                    
+    colnames(ss.sub.trt) <- paste0("T_", colnames(ss.sub.trt))
 
   out = list(
     n.analysis =j,
@@ -566,7 +566,7 @@ Multi.BAET= function(n.sim,
                      maxN = 300,
                      upper = rep (0.90, ns), lower = rep (0.10, ns),
                      rar = F,
-                     rarmin.p = 0.1, 
+                     rarmin.p = 0.1,
                      rarmax.p = 0.9,
                      MOR = rep(-Inf, ns),
                      prob.MOR = rep(0.10, ns),
@@ -603,8 +603,8 @@ Multi.BAET= function(n.sim,
     for (i in 1:ns){
       sd[i,] = unlist(test$est[[i]])[(3*nt+1):(3*nt+nt)]
     }
-    
-    summmat = matrix(rep(0, nt*ns), nrow =ns, ncol = nt)    
+
+    summmat = matrix(rep(0, nt*ns), nrow =ns, ncol = nt)
     summmat = test$ss.sub.trt
 
     ss.sub = c()
@@ -625,7 +625,7 @@ Multi.BAET= function(n.sim,
   # treament sd
   stacked_matrices_sd <- abind(mt1[2,], along = 3)
   sd = apply(stacked_matrices_sd, c(1, 2), mean)
-  
+
   # numbers summary matrix
   matrix_list <- mt1[3,]  # Replace with actual matrices
 
@@ -635,7 +635,7 @@ Multi.BAET= function(n.sim,
 
 
 
-  
+
   # ss.sub
   ss.sub.dist = abind(mt1[4,], along = 2)
   ss.sub.mean= apply (ss.sub.dist,1,mean)
