@@ -541,6 +541,7 @@ BAET.sim = function(nt, ns,
 
 #' @return n.analysis: number of analysis conducted to end the whole trial
 #' @return trt_sub: simulated treatment arm allocation (1st column) and subgroup (2nd column)
+#' @return ss.sub.trt: a ‘ns’ * ‘nt’ matrix storing the sample size for each subpopulation in each treatment arm, with the row number indicating the subpopulation and the column number indicating the treatment arm.
 #' @return est: treatment effect estimation(posterior mean) and the 95% Credible interval bounds for each treatment arm in each subgroup
 #' @return powerind: power indicator of whether the best treatment arms is correctly selected in each subgroup
 #' @return y: simlulated outcome
@@ -665,7 +666,8 @@ Multi.BAET= function(n.sim,
 
 #' @return est: the posterior mean of each treatment (col) in each subpopulation (row); e.g. est[1,2] is treatment 2 in subpopulation 1
 #' @return sd: the posterior sd of each treatment (col) in each subpopulation (row)
-#' @return ss.sub.dist: the sample size distribution for each subpopualtion (row)
+#' @return ss.sub.dist: the sample size distribution for each subpopulation (row)
+#' @return ss.sub.trt.mean: a ‘ns’ * ‘nt’ matrix storing the averaged sample size for each subpopulation in each treatment arm, with the row number indicating the subpopulation and the column number indicating the treatment arm.
 #' @return ss.sub.mean: the expected (mean) sample size for each subpopulation
 #' @return ss.t.dist: the sample size distribution for the whole trial
 #' @return ss.t.mean: the mean total sample size for the whole trial
