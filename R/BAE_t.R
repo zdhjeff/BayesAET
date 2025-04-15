@@ -8,7 +8,10 @@ library(roxygen2)
 library(fastDummies)
 library(parallel)
 
+
+
 # Helper function to adjust probability under rar:
+
 
 adjust_prob <- function(prob, rarmin.p, rarmax.p) {
   # Step 1: Handle special cases
@@ -59,6 +62,19 @@ adjust_prob <- function(prob, rarmin.p, rarmax.p) {
 #' @param N.MCMC Number of MCMC samples
 #' @param prior.cov the prior covariance for a multivariate normal prior
 #' @param prior.mean the prior mean for a multivariate normal prior
+
+#' @return n.analysis: number of analysis conducted to end the whole trial
+#' @return trt_sub: simulated treatment arm allocation (1st column) and subgroup (2nd column)
+#' @return ss.sub.trt: a ‘ns’ * ‘nt’ matrix storing the sample size for each subpopulation in each treatment arm, with the row number indicating the subpopulation and the column number indicating the treatment arm.
+#' @return est: treatment effect estimation(posterior mean) and the 95% Credible interval bounds for each treatment arm in each subgroup
+#' @return powerind: power indicator of whether the best treatment arms is correctly selected in each subgroup
+#' @return y: simlulated outcome
+#' @return n_terminate: the total sample size consumed when trial ends
+#' @return prob_sup_minioutcome: the probability of a treatment large than the MOR
+#' @return prob_superiority: the probability of a treatment being the best among each subgroup
+
+#' @export
+
 
 BAET.sim = function(nt, ns,
                     ss.interim.es,
@@ -539,21 +555,43 @@ BAET.sim = function(nt, ns,
 
 }
 
-#' @return n.analysis: number of analysis conducted to end the whole trial
-#' @return trt_sub: simulated treatment arm allocation (1st column) and subgroup (2nd column)
-#' @return ss.sub.trt: a ‘ns’ * ‘nt’ matrix storing the sample size for each subpopulation in each treatment arm, with the row number indicating the subpopulation and the column number indicating the treatment arm.
-#' @return est: treatment effect estimation(posterior mean) and the 95% Credible interval bounds for each treatment arm in each subgroup
-#' @return powerind: power indicator of whether the best treatment arms is correctly selected in each subgroup
-#' @return y: simlulated outcome
-#' @return n_terminate: the total sample size consumed when trial ends
-#' @return prob_sup_minioutcome: the probability of a treatment large than the MOR
-#' @return prob_superiority: the probability of a treatment being the best among each subgroup
+
 
 
 
 #' Multi.BAET: this function simulates the properties of Bayesian adaptive enrichment trial
 #' @param n.sim number of simulations
 #' @param n.cores number of cores for computation, default is half of the total cores
+#' @param nt number of treatment arms
+#' @param ns number of subgroups
+#' @param ss.interim.es A list containing the g vectors, with gth vector indicating the accumulated number of sample sizes for each interim analysis for gth subpopulation
+#' @param response.type either 'binary'(probability), 'count'(lambda) or 'gaussian'
+#' @param mean.response vector of mean responses: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup
+#' @param prob.subpopulation the probability of a subject coming from one specific subpopulation. default: rep (1/ns, ns)
+#' @param prob.trtarm  the (initial) probability of a subject being assigned to a specific treatment arm. default: rep (1/nt, nt)
+#' @param maxN the maximum sample size, trial will stop when achieving this number
+#' @param upper upper probability threshold to claim superiority (in a specific subgroup); the treatment arm wins if it goes above this threshold
+#' @param lower lower probability threshold to claim superiority (in a specific subgroup); the treatment arm will be dropped if it goes below this threshold
+#' @param rar whether using responsive adaptive randomization (rar)
+#' @param rarmin.p the minimum randomization probability under rar  default:0.1
+#' @param rarmax.p the maximum randomization probability under rar  default:0.9
+#' @param MOR the minimum meaningful outcome threshold for each subgroup
+#' @param prob.MOR the probability threshold of being larger than the MOR, treatment arms below this threshold will be dropped
+#' @param N.MCMC Number of MCMC samples
+#' @param prior.cov the prior covariance for a multivariate normal prior
+#' @param prior.mean the prior mean for a multivariate normal prior
+
+
+#' @return est: the posterior mean of each treatment (col) in each subpopulation (row); e.g. est[1,2] is treatment 2 in subpopulation 1
+#' @return sd: the posterior sd of each treatment (col) in each subpopulation (row)
+#' @return ss.sub.dist: the sample size distribution for each subpopulation (row)
+#' @return ss.sub.trt.mean: a ‘ns’ * ‘nt’ matrix storing the averaged sample size for each subpopulation in each treatment arm, with the row number indicating the subpopulation and the column number indicating the treatment arm.
+#' @return ss.sub.mean: the expected (mean) sample size for each subpopulation
+#' @return ss.t.dist: the sample size distribution for the whole trial
+#' @return ss.t.mean: the mean total sample size for the whole trial
+#' @return power.sub: the power for each subpopulation
+#' @return computation.time: the overall simulation time used
+#' @export
 
 Multi.BAET= function(n.sim,
                      n.cores=detectCores()/2,
@@ -664,15 +702,6 @@ Multi.BAET= function(n.sim,
 }
 
 
-#' @return est: the posterior mean of each treatment (col) in each subpopulation (row); e.g. est[1,2] is treatment 2 in subpopulation 1
-#' @return sd: the posterior sd of each treatment (col) in each subpopulation (row)
-#' @return ss.sub.dist: the sample size distribution for each subpopulation (row)
-#' @return ss.sub.trt.mean: a ‘ns’ * ‘nt’ matrix storing the averaged sample size for each subpopulation in each treatment arm, with the row number indicating the subpopulation and the column number indicating the treatment arm.
-#' @return ss.sub.mean: the expected (mean) sample size for each subpopulation
-#' @return ss.t.dist: the sample size distribution for the whole trial
-#' @return ss.t.mean: the mean total sample size for the whole trial
-#' @return power.sub: the power for each subpopulation
-#' @return computation.time: the overall simulation time used
 
 
 
