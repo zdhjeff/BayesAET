@@ -4,7 +4,7 @@ Title: An R package for Bayesian Adaptive Enrichment Design in Multi-arm Clinica
 Version: 0.1.0
 Author: Denghuang Zhan
 Maintainer: The package maintainer <jzhan@cheos.ubc.ca>
-Description: An R package for Bayesian Adaptive Enrichment Design in Multi-arm Clinical Trials with Pre-defined Subgroups. 
+Description: An R package for Bayesian Adaptive Enrichment Design in Multi-arm Clinical Trials with Pre-specified Subgroups. 
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
