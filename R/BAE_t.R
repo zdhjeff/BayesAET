@@ -1,3 +1,4 @@
+# load the required packages
 library(ggplot2)
 library(abind)
 library(reshape2)
@@ -8,11 +9,7 @@ library(roxygen2)
 library(fastDummies)
 library(parallel)
 
-
-
 # Helper function to adjust probability under rar:
-
-
 adjust_prob <- function(prob, rarmin.p, rarmax.p) {
   # Step 1: Handle special cases
   if (any(is.na(prob))) stop("Input probability vector contains NA values")
@@ -43,6 +40,8 @@ adjust_prob <- function(prob, rarmin.p, rarmax.p) {
 
   return(prob)
 }
+
+
 #' BAET simulator: this function simulates a Bayesian adaptive enrichment trial
 #' @param nt number of treatment arms
 #' @param ns number of subgroups
