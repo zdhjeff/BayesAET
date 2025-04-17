@@ -97,3 +97,28 @@ computation.time: Time consumed for computation
 \description{
 Multi.BAET: this function simulates the properties of Bayesian adaptive enrichment trial
 }
+\examples{
+nt=3
+ns=2
+Multi.BAET(n.sim = 5,
+           n.cores=3,
+           nt=3, ns=2,
+           ss.interim.es = list(c(30, 50, 100), c(20, 60, 100)),
+           response.type = "gaussian",
+           sig.e = 10,
+           mean.response = matrix(c(seq(nt*ns)),nrow = nt, ncol = ns, byrow =F),
+           prob.subpopulation = rep (1/ns, ns),
+           prob.trtarm = rep (1/nt, nt),
+           maxN = 100,
+           upper = rep (1, ns),
+           lower = rep (0, ns),
+           rar = F,
+           rarmin.p = 0.1,
+           rarmax.p = 0.9,
+           MOR = rep(0, ns),
+           prob.MOR = rep(0.1, ns),
+           N.MCMC = 3000,
+           prior.cov = diag(25, ns*nt),
+           prior.mean = rep(0, ns*nt))
+
+}

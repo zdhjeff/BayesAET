@@ -95,3 +95,27 @@ prob_superiority: A list of length ‘ns’ with each component summarizing the 
 \description{
 BAET simulator: this function simulates a Bayesian adaptive enrichment trial
 }
+\examples{
+nt =3
+ns =2
+BAET.sim (nt=3, ns=2,
+         ss.interim.es = list(c(30, 50, 100), c(20, 60, 100)),
+         response.type = "gaussian",
+         sig.e = 10,
+         mean.response = matrix(c(seq(nt*ns)), nrow = nt, ncol = ns, byrow =F),
+         prob.subpopulation = rep (1/ns, ns),
+         prob.trtarm = rep (1/nt, nt),
+        maxN = 300,
+         upper = rep (0.90, ns),
+         lower = rep (0.10, ns),
+        rar = F,
+         rarmin.p = 0.1,
+         rarmax.p = 0.9,
+         MOR = rep(-Inf, ns),
+         prob.MOR = rep(0.10, ns),
+         N.MCMC = 3000,
+         prior.cov = diag(100, ns*nt),
+         prior.mean = rep(0, ns*nt) #notice for binary/count outcome,the prior
+         #is on log-odds/log-rate, ie, prior is put on the coef of the model
+)
+}

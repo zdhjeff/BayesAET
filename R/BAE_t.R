@@ -77,6 +77,30 @@ adjust_prob <- function(prob, rarmin.p, rarmax.p) {
 #' @return prob_sup_minioutcome: A list of length ‘ns’ with each component summarizing the probability of superiority over the fixed MOR within a subpopulation. Each component is a matrix with rows representing treatments and columns displaying the probability of superiority over the fixed MOR at each interim look.
 #' @return prob_superiority: A list of length ‘ns’ with each component summarizing the probability of superiority among different treatments within a subpopulation. Each component is a matrix with rows indicating treatments and columns displaying the probability of superiority for each treatment at each interim look.
 
+#' @examples
+#' nt =3
+#' ns =2
+#' BAET.sim (nt=3, ns=2,
+#'          ss.interim.es = list(c(30, 50, 100), c(20, 60, 100)),
+#'          response.type = "gaussian",
+#'          sig.e = 10,
+#'          mean.response = matrix(c(seq(nt*ns)), nrow = nt, ncol = ns, byrow =F),
+#'          prob.subpopulation = rep (1/ns, ns),
+#'          prob.trtarm = rep (1/nt, nt),
+#'         maxN = 300,
+#'          upper = rep (0.90, ns),
+#'          lower = rep (0.10, ns),
+#'         rar = F,
+#'          rarmin.p = 0.1,
+#'          rarmax.p = 0.9,
+#'          MOR = rep(-Inf, ns),
+#'          prob.MOR = rep(0.10, ns),
+#'          N.MCMC = 3000,
+#'          prior.cov = diag(100, ns*nt),
+#'          prior.mean = rep(0, ns*nt) #notice for binary/count outcome,the prior
+#'          #is on log-odds/log-rate, ie, prior is put on the coef of the model
+#')
+
 #' @export
 
 
@@ -599,6 +623,33 @@ BAET.sim = function(nt, ns,
 #' @return ss.t.mean: A number of average overall sample size consumed
 #' @return power.sub: A vector length ‘ns’ indicating the (empirical) power estimated in each subpopulation
 #' @return computation.time: Time consumed for computation
+
+#' @examples
+#' nt=3
+#' ns=2
+
+#' Multi.BAET(n.sim = 5,
+#'            n.cores=3,
+#'            nt=3, ns=2,
+#'            ss.interim.es = list(c(30, 50, 100), c(20, 60, 100)),
+#'            response.type = "gaussian",
+#'            sig.e = 10,
+#'            mean.response = matrix(c(seq(nt*ns)),nrow = nt, ncol = ns, byrow =F),
+#'            prob.subpopulation = rep (1/ns, ns),
+#'            prob.trtarm = rep (1/nt, nt),
+#'            maxN = 100,
+#'            upper = rep (1, ns),
+#'            lower = rep (0, ns),
+#'            rar = F,
+#'            rarmin.p = 0.1,
+#'            rarmax.p = 0.9,
+#'            MOR = rep(0, ns),
+#'            prob.MOR = rep(0.1, ns),
+#'            N.MCMC = 3000,
+#'            prior.cov = diag(25, ns*nt),
+#'            prior.mean = rep(0, ns*nt))
+#'
+
 #' @export
 
 Multi.BAET= function(n.sim,
