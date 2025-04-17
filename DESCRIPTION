@@ -1,6 +1,6 @@
 Package: BayesAET
 Type: Package
-Title: An R package for Bayesian Adaptive Enrichment Design in Multi-arm Clinical Trials 
+Title: Bayesian Adaptive Enrichment Design in Multi-arm Clinical Trials 
 Version: 0.1.0
 Author: Denghuang Zhan
 Maintainer: The package maintainer <jzhan@cheos.ubc.ca>
