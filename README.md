@@ -14,6 +14,7 @@ library(matlib)
 library(fastDummies)
 library(devtools)
 
+# install the BayesAET package
 install_github("zdhjeff/BayesAET")
 
 ```
