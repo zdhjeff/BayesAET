@@ -48,6 +48,9 @@ adjust_prob <- function(prob, rarmin.p, rarmax.p) {
 #' @param ss.interim.es A list containing the g vectors, with gth vector indicating the accumulated number of sample sizes for each interim analysis for gth subpopulation
 #' @param response.type either 'binary'(probability), 'count'(lambda) or 'gaussian'
 #' @param mean.response vector of mean responses: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup
+#' @param sig.e The standard deviation of the error term when generating a gaussian outcome. The default value is 1. This parameter is only relevant when the “response.type” is set as “gaussian”.
+#' @param shape The shape parameter for the gamma distribution for the standard deviation of the error term, i.e., “sig.e”. The default value is 0.001. This parameter is only relevant when the “response.type” is set as “gaussian”.
+#' @param rate The rate parameter for the gamma distribution for the standard deviation of the error term, i.e., “sig.e”. The default value is 0.001. This parameter is only relevant when the “response.type” is set as “gaussian”.
 #' @param prob.subpopulation the probability of a subject coming from one specific subpopulation. default: rep (1/ns, ns)
 #' @param prob.trtarm  the (initial) probability of a subject being assigned to a specific treatment arm. default: rep (1/nt, nt)
 #' @param maxN the maximum sample size, trial will stop when achieving this number
@@ -63,12 +66,14 @@ adjust_prob <- function(prob, rarmin.p, rarmax.p) {
 #' @param prior.mean the prior mean for a multivariate normal prior
 
 #' @return n.analysis: number of analysis conducted to end the whole trial
+#' @return interim.sub: A vector indicating the sequence of subpopulations that reach the specified sample size threshold and trigger interim analyses.
+#' @return n_terminate: the total sample size consumed when trial ends.
 #' @return trt_sub: simulated treatment arm allocation (1st column) and subgroup (2nd column)
+#' @return ss.sub: a vector of length ‘ns’ indicating the sample size consumed in each subpopulation.
 #' @return ss.sub.trt: a ‘ns’ * ‘nt’ matrix storing the sample size for each subpopulation in each treatment arm, with the row number indicating the subpopulation and the column number indicating the treatment arm.
 #' @return est: treatment effect estimation(posterior mean) and the 95% Credible interval bounds for each treatment arm in each subgroup
 #' @return powerind: power indicator of whether the best treatment arms is correctly selected in each subgroup
 #' @return y: simlulated outcome
-#' @return n_terminate: the total sample size consumed when trial ends
 #' @return prob_sup_minioutcome: the probability of a treatment large than the MOR
 #' @return prob_superiority: the probability of a treatment being the best among each subgroup
 
@@ -566,6 +571,9 @@ BAET.sim = function(nt, ns,
 #' @param ss.interim.es A list containing the g vectors, with gth vector indicating the accumulated number of sample sizes for each interim analysis for gth subpopulation
 #' @param response.type either 'binary'(probability), 'count'(lambda) or 'gaussian'
 #' @param mean.response vector of mean responses: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup
+#' @param sig.e The standard deviation of the error term when generating a gaussian outcome. The default value is 1. This parameter is only relevant when the “response.type” is set as “gaussian”.
+#' @param shape The shape parameter for the gamma distribution for the standard deviation of the error term, i.e., “sig.e”. The default value is 0.001. This parameter is only relevant when the “response.type” is set as “gaussian”.
+#' @param rate The rate parameter for the gamma distribution for the standard deviation of the error term, i.e., “sig.e”. The default value is 0.001. This parameter is only relevant when the “response.type” is set as “gaussian”.
 #' @param prob.subpopulation the probability of a subject coming from one specific subpopulation. default: rep (1/ns, ns)
 #' @param prob.trtarm  the (initial) probability of a subject being assigned to a specific treatment arm. default: rep (1/nt, nt)
 #' @param maxN the maximum sample size, trial will stop when achieving this number
@@ -581,10 +589,10 @@ BAET.sim = function(nt, ns,
 #' @param prior.mean the prior mean for a multivariate normal prior
 
 
-#' @return est: the posterior mean of each treatment (col) in each subpopulation (row); e.g. est[1,2] is treatment 2 in subpopulation 1
-#' @return sd: the posterior sd of each treatment (col) in each subpopulation (row)
-#' @return ss.sub.dist: the sample size distribution for each subpopulation (row)
+#' @return est.mean: the posterior mean of each treatment (col) in each subpopulation (row); e.g. est[1,2] is treatment 2 in subpopulation 1
+#' @return est.sd: the posterior sd of each treatment (col) in each subpopulation (row)
 #' @return ss.sub.trt.mean: a ‘ns’ * ‘nt’ matrix storing the averaged sample size for each subpopulation in each treatment arm, with the row number indicating the subpopulation and the column number indicating the treatment arm.
+#' @return ss.sub.dist: the sample size distribution for each subpopulation (row)
 #' @return ss.sub.mean: the expected (mean) sample size for each subpopulation
 #' @return ss.t.dist: the sample size distribution for the whole trial
 #' @return ss.t.mean: the mean total sample size for the whole trial
