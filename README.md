@@ -22,11 +22,11 @@ install_github("zdhjeff/BayesAET")
 
 ```r
 library(abind)
-library(matlib)
 library(reshape2)
 library(rjags)
 library(doParallel)
 library(MASS)
+library(matlib)
 library(fastDummies)
 library(BayesAET)
 
