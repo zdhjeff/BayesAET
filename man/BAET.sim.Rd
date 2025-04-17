@@ -27,60 +27,70 @@ BAET.sim(
 )
 }
 \arguments{
-\item{nt}{number of treatment arms}
+\item{nt}{The number of treatment arms.}
 
-\item{ns}{number of subgroups}
+\item{ns}{The number of subpopulations.}
 
-\item{ss.interim.es}{A list containing the g vectors, with gth vector indicating the accumulated number of sample sizes for each interim analysis for gth subpopulation}
+\item{ss.interim.es}{A list containing g vectors, with g-th vector indicating the accumulated sample sizes at each interim analysis for g-th subpopulation.}
 
-\item{response.type}{either 'binary'(probability), 'count'(lambda) or 'gaussian'}
+\item{response.type}{The outcome type, one of “gaussian”, “binary” or “count”.}
 
-\item{mean.response}{vector of mean responses: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup}
+\item{sig.e}{The standard deviation of the error term when generating a gaussian outcome. The default value is 1. This parameter is only relevant when the “response.type” is set as “gaussian”.}
 
-\item{prob.subpopulation}{the probability of a subject coming from one specific subpopulation. default: rep (1/ns, ns)}
+\item{mean.response}{A ‘nt’ * ‘ns’  matrix of the assumed true mean responses for each treatment (row number) in each subpopulation (column number). For binary and count outcomes, the inputs are the probabilities and rates, respectively.}
 
-\item{prob.trtarm}{the (initial) probability of a subject being assigned to a specific treatment arm. default: rep (1/nt, nt)}
+\item{prob.subpopulation}{A vector of length ‘ns’ indicating the probabilities of a participant belonging to each of the subpopulations. The default is an equal probability for each subpopulation.}
 
-\item{maxN}{the maximum sample size, trial will stop when achieving this number}
+\item{prob.trtarm}{A vector of length ‘nt’ indicating the (initial) probability of a participant being assigned to each treatment arm. The default is an equal probability to each treatment arm.}
 
-\item{upper}{upper probability threshold to claim superiority (in a specific subgroup); the treatment arm wins if it goes above this threshold}
+\item{maxN}{The maximum sample size.}
 
-\item{lower}{lower probability threshold to claim superiority (in a specific subgroup); the treatment arm will be dropped if it goes below this threshold}
+\item{upper}{A vector of length ‘ns’ indicating the posterior probability threshold above which a treatment will be declared best (superiority) for each subpopulation. The default value is 0.90.}
 
-\item{rar}{whether using responsive adaptive randomization (rar)}
+\item{lower}{A vector of length ‘ns’ indicating the posterior probability threshold below which a treatment will be dropped for each subpopulation. The default value is 0.10.}
 
-\item{rarmin.p}{the minimum randomization probability under rar  default:0.1}
+\item{rar}{A logical indicator of whether using responsive adaptive randomization (RAR). The default setting is ‘false’, i.e., balanced randomization.}
 
-\item{rarmax.p}{the maximum randomization probability under rar  default:0.9}
+\item{rarmin.p}{The minimum randomization probability under ‘rar’. The default value is 0.1.}
 
-\item{MOR}{the minimum meaningful outcome threshold for each subgroup}
+\item{rarmax.p}{The maximum randomization probability under ‘rar’. The default value is 0.9.}
 
-\item{prob.MOR}{the probability threshold of being larger than the MOR, treatment arms below this threshold will be dropped}
+\item{MOR}{A vector of length ‘ns’ indicating the minimum outcome requirement threshold for each subpopulation. The default value is ‘-Inf’.}
 
-\item{N.MCMC}{Number of MCMC samples}
+\item{prob.MOR}{A vector of length ‘ns’ indicating the posterior probability threshold below which a treatment will be dropped due to the outcome not achieving the ‘MOR’ for each subpopulation. The default value is 0.10.}
 
-\item{prior.cov}{the prior covariance for a multivariate normal prior}
+\item{N.MCMC}{The number of MCMC samples (excluding burn in samples)}
 
-\item{prior.mean}{the prior mean for a multivariate normal prior}
+\item{prior.cov}{A (‘nt’ * ‘ns’) by (‘nt’ * ‘ns’) square matrix for the prior covariance of a multivariate normal prior for the mean responses. The default is a diagonal matrix with ‘100’ on the diagonal.}
+
+\item{prior.mean}{A vector of length ‘nt’ * ‘ns’ for prior mean of a multivariate normal prior for the mean responses. The default is a vector of zeros.}
+
+\item{shape}{The shape parameter for the gamma distribution for the standard deviation of the error term, i.e., “sig.e”. The default value is 0.001. This parameter is only relevant when the “response.type” is set as “gaussian”.}
+
+\item{rate}{The rate parameter for the gamma distribution for the standard deviation of the error term, i.e., “sig.e”. The default value is 0.001. This parameter is only relevant when the “response.type” is set as “gaussian”.}
 }
 \value{
-n.analysis: number of analysis conducted to end the whole trial
+n.analysis: The total number of analyses, i.e., the number of interim analysis plus the final analysis.
 
-trt_sub: simulated treatment arm allocation (1st column) and subgroup (2nd column)
+interim.sub: A vector indicating the sequence of subpopulations that reach the specified sample size threshold and trigger interim analyses.
 
-ss.sub.trt: a ‘ns’ * ‘nt’ matrix storing the sample size for each subpopulation in each treatment arm, with the row number indicating the subpopulation and the column number indicating the treatment arm.
+n_terminate: The total sample size consumed when the trial ended.
 
-est: treatment effect estimation(posterior mean) and the 95% Credible interval bounds for each treatment arm in each subgroup
+trt_sub: A two-column matrix with the first column displaying the treatment each participant received and the second column displaying the subpopulation in which the participant belongs.
 
-powerind: power indicator of whether the best treatment arms is correctly selected in each subgroup
+ss.sub: A vector of length ‘ns’ indicating the sample size consumed in each subpopulation.
 
-y: simlulated outcome
+ss.sub.trt: A ‘ns’ * ‘nt’ matrix storing the sample size for each subpopulation in each treatment arm, with the row number indicating the subpopulation and the column number indicating the treatment arm.
 
-n_terminate: the total sample size consumed when trial ends
+est: A list of length ‘ns’ with each component summarizing the posterior distribution for the mean responses within a subpopulation at trial termination. Each component is a ‘nt’ * 4 data frame with rows representing treatments and columns displaying the posterior mean, the lower and upper bound of 95% Credible Interval, and the SD of the posterior distribution, respectively.
 
-prob_sup_minioutcome: the probability of a treatment large than the MOR
+powerind: A vector of length ‘ns’ indicating whether the best treatment arm was correctly selected in each subpopulation at trial termination. The value is ‘1’ if correctly selected and ‘0’ otherwise.
 
-prob_superiority: the probability of a treatment being the best among each subgroup
+y: A vector for the simulated outcomes.
+
+prob_sup_minioutcome: A list of length ‘ns’ with each component summarizing the probability of superiority over the fixed MOR within a subpopulation. Each component is a matrix with rows representing treatments and columns displaying the probability of superiority over the fixed MOR at each interim look.
+
+prob_superiority: A list of length ‘ns’ with each component summarizing the probability of superiority among different treatments within a subpopulation. Each component is a matrix with rows indicating treatments and columns displaying the probability of superiority for each treatment at each interim look.
 }
 \description{
 BAET simulator: this function simulates a Bayesian adaptive enrichment trial
