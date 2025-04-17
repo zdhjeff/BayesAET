@@ -31,39 +31,41 @@ library(fastDummies)
 library(BayesAET)
 
 #' BAET simulator: this function simulates a Bayesian adaptive enrichment trial
-#' @param nt number of treatment arms
-#' @param ns number of subgroups
-#' @param ss.interim.es A list containing the g vectors, with gth vector indicating the accumulated number of sample sizes for each interim analysis for gth subpopulation
-#' @param response.type either 'binary'(probability), 'count'(lambda) or 'gaussian'
-#' @param mean.response vector of mean responses: a nt (row) * ns (col) matrix, with row number indicates treatment and col number indicates subgroup
+#' @param nt The number of treatment arms.
+#' @param ns The number of subpopulations.
+#' @param ss.interim.es A list containing g vectors, with g-th vector indicating the accumulated sample sizes at each interim analysis for g-th subpopulation.
+#' @param response.type The outcome type, one of “gaussian”, “binary” or “count”.
+#' @param mean.response A ‘nt’ * ‘ns’  matrix of the assumed true mean responses for each treatment (row number) in each subpopulation (column number). For binary and count outcomes, the inputs are the probabilities and rates, respectively.
 #' @param sig.e The standard deviation of the error term when generating a gaussian outcome. The default value is 1. This parameter is only relevant when the “response.type” is set as “gaussian”.
 #' @param shape The shape parameter for the gamma distribution for the standard deviation of the error term, i.e., “sig.e”. The default value is 0.001. This parameter is only relevant when the “response.type” is set as “gaussian”.
 #' @param rate The rate parameter for the gamma distribution for the standard deviation of the error term, i.e., “sig.e”. The default value is 0.001. This parameter is only relevant when the “response.type” is set as “gaussian”.
-#' @param prob.subpopulation the probability of a subject coming from one specific subpopulation. default: rep (1/ns, ns)
-#' @param prob.trtarm  the (initial) probability of a subject being assigned to a specific treatment arm. default: rep (1/nt, nt)
-#' @param maxN the maximum sample size, trial will stop when achieving this number
-#' @param upper upper probability threshold to claim superiority (in a specific subgroup); the treatment arm wins if it goes above this threshold
-#' @param lower lower probability threshold to claim superiority (in a specific subgroup); the treatment arm will be dropped if it goes below this threshold
-#' @param rar whether using responsive adaptive randomization (rar)
-#' @param rarmin.p the minimum randomization probability under rar  default:0.1
-#' @param rarmax.p the maximum randomization probability under rar  default:0.9
-#' @param MOR the minimum meaningful outcome threshold for each subgroup
-#' @param prob.MOR the probability threshold of being larger than the MOR, treatment arms below this threshold will be dropped
-#' @param N.MCMC Number of MCMC samples
-#' @param prior.cov the prior covariance for a multivariate normal prior
-#' @param prior.mean the prior mean for a multivariate normal prior
+#' @param prob.subpopulation A vector of length ‘ns’ indicating the probabilities of a participant belonging to each of the subpopulations. The default is an equal probability for each subpopulation.
+#' @param prob.trtarm  A vector of length ‘nt’ indicating the (initial) probability of a participant being assigned to each treatment arm. The default is an equal probability to each treatment arm.
+#' @param maxN The maximum sample size.
+#' @param upper A vector of length ‘ns’ indicating the posterior probability threshold above which a treatment will be declared best (superiority) for each subpopulation. The default value is 0.90.
+#' @param lower A vector of length ‘ns’ indicating the posterior probability threshold below which a treatment will be dropped for each subpopulation. The default value is 0.10.
+#' @param rar A logical indicator of whether using responsive adaptive randomization (RAR). The default setting is ‘false’, i.e., balanced randomization.
+#' @param rarmin.p The minimum randomization probability under ‘rar’. The default value is 0.1.
+#' @param rarmax.p The maximum randomization probability under ‘rar’. The default value is 0.9.
+#' @param MOR A vector of length ‘ns’ indicating the minimum outcome requirement threshold for each subpopulation. The default value is ‘-Inf’.
+#' @param prob.MOR A vector of length ‘ns’ indicating the posterior probability threshold below which a treatment will be dropped due to the outcome not achieving the ‘MOR’ for each subpopulation. The default value is 0.10.
+#' @param N.MCMC The number of MCMC samples (excluding burn in samples)
+#' @param prior.cov A (‘nt’ * ‘ns’) by (‘nt’ * ‘ns’) square matrix for the prior covariance of a multivariate normal prior for the mean responses. The default is a diagonal matrix with ‘100’ on the diagonal.
+#' @param prior.mean A vector of length ‘nt’ * ‘ns’ for prior mean of a multivariate normal prior for the mean responses. The default is a vector of zeros.
 
-#' @return n.analysis: number of analysis conducted to end the whole trial
+
+#' @return n.analysis: The total number of analyses, i.e., the number of interim analysis plus the final analysis.
 #' @return interim.sub: A vector indicating the sequence of subpopulations that reach the specified sample size threshold and trigger interim analyses.
-#' @return n_terminate: the total sample size consumed when trial ends.
-#' @return trt_sub: simulated treatment arm allocation (1st column) and subgroup (2nd column)
-#' @return ss.sub: a vector of length ‘ns’ indicating the sample size consumed in each subpopulation.
-#' @return ss.sub.trt: a ‘ns’ * ‘nt’ matrix storing the sample size for each subpopulation in each treatment arm, with the row number indicating the subpopulation and the column number indicating the treatment arm.
-#' @return est: treatment effect estimation(posterior mean) and the 95% Credible interval bounds for each treatment arm in each subgroup
-#' @return powerind: power indicator of whether the best treatment arms is correctly selected in each subgroup
-#' @return y: simlulated outcome
-#' @return prob_sup_minioutcome: the probability of a treatment large than the MOR
-#' @return prob_superiority: the probability of a treatment being the best among each subgroup
+#' @return n_terminate: The total sample size consumed when the trial ended.
+#' @return trt_sub: A two-column matrix with the first column displaying the treatment each participant received and the second column displaying the subpopulation in which the participant belongs.
+#' @return ss.sub: A vector of length ‘ns’ indicating the sample size consumed in each subpopulation.
+#' @return ss.sub.trt: A ‘ns’ * ‘nt’ matrix storing the sample size for each subpopulation in each treatment arm, with the row number indicating the subpopulation and the column number indicating the treatment arm.
+#' @return est: A list of length ‘ns’ with each component summarizing the posterior distribution for the mean responses within a subpopulation at trial termination. Each component is a ‘nt’ * 4 data frame with rows representing treatments and columns displaying the posterior mean, the lower and upper bound of 95% Credible Interval, and the SD of the posterior distribution, respectively.
+#' @return powerind: A vector of length ‘ns’ indicating whether the best treatment arm was correctly selected in each subpopulation at trial termination. The value is ‘1’ if correctly selected and ‘0’ otherwise.
+#' @return y: A vector for the simulated outcomes.
+#' @return prob_sup_minioutcome: A list of length ‘ns’ with each component summarizing the probability of superiority over the fixed MOR within a subpopulation. Each component is a matrix with rows representing treatments and columns displaying the probability of superiority over the fixed MOR at each interim look.
+#' @return prob_superiority: A list of length ‘ns’ with each component summarizing the probability of superiority among different treatments within a subpopulation. Each component is a matrix with rows indicating treatments and columns displaying the probability of superiority for each treatment at each interim look.
+
 
 ## Gaussian outcome
 set.seed(123)
@@ -179,18 +181,19 @@ $prob_superiority[[2]]
 
 ### Multiple simulation example with 'Multi.BAET':
 #' Multi.BAET: This function simulates the properties of Bayesian adaptive enrichment trial
-#' @param n.sim number of simulations
-#' @param n.cores number of cores for computation, default is half of the total cores
+#' @param n.sim The number of simulations
+#' @param n.cores The number of cores used for computation, default is half of the total cores
 
-#' @return est.mean: the posterior mean of each treatment (col) in each subpopulation (row); e.g. est[1,2] is treatment 2 in subpopulation 1
-#' @return est.sd: the posterior sd of each treatment (col) in each subpopulation (row)
-#' @return ss.sub.trt.mean: a ‘ns’ * ‘nt’ matrix storing the averaged sample size for each subpopulation in each treatment arm, with the row number indicating the subpopulation and the column number indicating the treatment arm.
-#' @return ss.sub.dist: the sample size distribution for each subpopulation (row)
-#' @return ss.sub.mean: the expected (mean) sample size for each subpopulation
-#' @return ss.t.dist: the sample size distribution for the whole trial
-#' @return ss.t.mean: the mean total sample size for the whole trial
-#' @return power.sub: the power for each subpopulation
-#' @return computation.time: the overall simulation time used
+#' @return est.mean: A ‘ns’ * ‘nt’ matrix storing the mean of the posterior mean, with row number indicating subpopulation and column number indicating treatment arm
+#' @return est.sd: A ‘ns’ * ‘nt’ matrix storing the mean of the posterior SD, with row number indicating subpopulation and column number indicating treatment arm
+#' @return ss.sub.trt.mean: A ‘ns’ * ‘nt’ matrix storing the averaged sample size for each subpopulation in each treatment arm, with the row number indicating the subpopulation and the column number indicating the treatment arm.
+#' @return ss.sub.dist: A ‘ns’ * ‘n.sim’ matrix storing the sample size consumed for each subpopulation in each run, with row number indicating subpopulation and column number indicating the specific run
+#' @return ss.sub.mean: A vector length ‘ns’ indicating the average sample size consumed in each subpopulation
+#' @return ss.t.dist: A ‘n.sim’ vector storing the overall sample size consumed in each run
+#' @return ss.t.mean: A number of average overall sample size consumed
+#' @return power.sub: A vector length ‘ns’ indicating the (empirical) power estimated in each subpopulation
+#' @return computation.time: Time consumed for computation
+
 set.seed(123)
 nt=3
 ns=2
