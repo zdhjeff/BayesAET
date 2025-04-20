@@ -9,12 +9,15 @@ library(roxygen2)
 library(fastDummies)
 library(parallel)
 
+#' @import abind
+#' @import reshape2
+#' @import rjags
+#' @import doParallel
+#' @import MASS
+#' @import roxygen2
+#' @import fastDummies
 
-<<<<<<< HEAD
 
-
-=======
->>>>>>> 14f2d881e70960892c8d6becd78b942355300859
 # Helper function to adjust probability under rar:
 adjust_prob <- function(prob, rarmin.p, rarmax.p) {
   # Step 1: Handle special cases
