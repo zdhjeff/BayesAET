@@ -13,6 +13,7 @@ library(parallel)
 #' @import reshape2
 #' @import rjags
 #' @import doParallel
+#' @import foreach
 #' @import MASS
 #' @import roxygen2
 #' @import fastDummies
