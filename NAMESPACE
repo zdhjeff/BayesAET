@@ -2,3 +2,10 @@
 
 export(BAET.sim)
 export(Multi.BAET)
+import(MASS)
+import(abind)
+import(doParallel)
+import(fastDummies)
+import(reshape2)
+import(rjags)
+import(roxygen2)
