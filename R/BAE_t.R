@@ -1,13 +1,13 @@
-# load the required packages
-library(ggplot2)
-library(abind)
-library(reshape2)
-library(rjags)
-library(doParallel)
-library(MASS)
-library(roxygen2)
-library(fastDummies)
-library(parallel)
+# # load the required packages
+# library(ggplot2)
+# library(abind)
+# library(reshape2)
+# library(rjags)
+# library(doParallel)
+# library(MASS)
+# library(roxygen2)
+# library(fastDummies)
+
 
 #' @import abind
 #' @import reshape2
