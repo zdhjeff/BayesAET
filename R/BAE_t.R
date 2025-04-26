@@ -88,6 +88,7 @@ adjust_prob <- function(prob, rarmin.p, rarmax.p) {
 #' @return prob_superiority: A list of length ‘ns’ with each component summarizing the probability of superiority among different treatments within a subpopulation. Each component is a matrix with rows indicating treatments and columns displaying the probability of superiority for each treatment at each interim look.
 
 #' @examples
+#'
 #' nt =3
 #' ns =2
 #' BAET.sim (nt=3, ns=2,

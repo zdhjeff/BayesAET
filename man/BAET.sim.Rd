@@ -96,6 +96,7 @@ prob_superiority: A list of length ‘ns’ with each component summarizing the 
 BAET simulator: this function simulates a Bayesian adaptive enrichment trial
 }
 \examples{
+
 nt =3
 ns =2
 BAET.sim (nt=3, ns=2,
