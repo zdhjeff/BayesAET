@@ -111,7 +111,7 @@ adjust_prob <- function(prob, rarmin.p, rarmax.p) {
 #'          #is on log-odds/log-rate, ie, prior is put on the coef of the model
 #')
 
-#' @examples
+
 # nt =3
 # ns =2
 # BAET.sim (nt=3, ns=2,
