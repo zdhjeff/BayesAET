@@ -118,26 +118,4 @@ BAET.sim (nt=3, ns=2,
          prior.mean = rep(0, ns*nt) #notice for binary/count outcome,the prior
          #is on log-odds/log-rate, ie, prior is put on the coef of the model
 )
-nt =3
-ns =2
-BAET.sim (nt=3, ns=2,
-         ss.interim.es = list(c(60, 120, 180, 220, 390), c(50, 110, 140, 200, 390)),
-         response.type = "gaussian",
-         sig.e = 10,
-         mean.response = matrix(c(8, 12, 14, 5, 8, 11)), nrow = nt, ncol = ns, byrow =F),
-         prob.subpopulation = c(0.6, 0.4),
-         prob.trtarm = rep (1/nt, nt),
-         maxN = 390,
-         upper = rep (0.90, ns),
-         lower = rep (0.00, ns),
-         rar = F,
-         rarmin.p = 0.1,
-         rarmax.p = 0.9,
-         MOR = rep(6, ns),
-         prob.MOR = rep(0.50, ns),
-         N.MCMC = 3000,
-         prior.cov = diag(100, ns*nt),
-         prior.mean = rep(11, ns*nt) #notice for binary/count outcome,the prior
-         #is on log-odds/log-rate, ie, prior is put on the coef of the model
-)
 }
