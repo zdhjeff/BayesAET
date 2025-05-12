@@ -1,9 +1,9 @@
 # Bayesian-Adaptive-Enrichment-Design
-An R package for Bayesian adaptive enrichment trials with multiple treatment arms and multiple pre-specified (categorical) subpopulations from the paper "Bayesian adaptive enrichment design in multi-arm clinical trials: The BayesAET package for R users"  <br>
+An R package for Bayesian adaptive enrichment trials with multiple treatment arms and multiple pre-specified (categorical) subpopulations from the paper " Zhan D, Ouyang Y, Vila-Rodriguez F, Karim ME, Wong H. Bayesian adaptive enrichment design in multi-arm clinical trials: The BayesAET package for R users. Computer Methods and Programs in Biomedicine. 2025 May 5:108833."  <br>
 Run the following command to install the package and other packages:
 
 ```r
-#install the following packages if needed
+# Install the following packages if needed
 
 library(abind)
 library(reshape2)
